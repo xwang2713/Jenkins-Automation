@@ -7,10 +7,10 @@ version = "5.2.0"
 ##############################################
 
 type("Create Jenkins Projects")
-myApp = App.open("C:\Program Files (x86)\Google\Chrome\Application\chrome")
+myApp = App.open("C:\Program Files (x86)\Google\Chrome\Application\chrome http://10.176.32.6/view/HPCC-5.x/\n")
 wait(5)
-type("http://10.176.32.6/view/HPCC-5.x/\n")
-wait(2)
+#type("http://10.176.32.6/view/HPCC-5.x/\n")
+#wait(2)
 
 click("1424364351024.png")
 
@@ -74,14 +74,26 @@ wait(1)
 # ECLIDE Project                             #
 #                                            #
 ##############################################
-click("1424381363527.png")
+click("1424447727178.png")
+
+
 wait(3)
 click("1424380583579.png")
 wait(2)
 click("1424380615452.png")
 wait(1)
-for i in range(60):
+for i in range(50):
    type(Key.DOWN)
+wait(1)   
+for i in range(30):
+   type(Key.DOWN)
+   if exists("1424380709407.png"):
+       break
+
+wait(3)
+type(Key.DOWN)
+type(Key.DOWN)
+wait(2)
 click("1424380709407.png")
 wait(1)
 type("CE-graphcontrol-Win-32bit-" + version + "-" + build_sequence)
@@ -113,11 +125,15 @@ wait(1)
 click("1424376840150.png")
 wait(2)
 
-for i in range(5):
+for i in range(50):
+   type(Key.DOWN)
+   if exists("1424376906302.png"):
+       break
+
+for i in range(3):
    type(Key.DOWN)
 
-
-wait(2)
+wait(1)
 click("1424376906302.png")
 click("1424376926049.png")
 type(".*" + version + "-" + build_sequence)

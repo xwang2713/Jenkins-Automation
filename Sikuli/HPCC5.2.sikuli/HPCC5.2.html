@@ -79,11 +79,11 @@ version = <span class="str">"5.2.0"</span>
 </span><span class="cmt">##############################################
 </span>
 <span class="skw">type</span>(<span class="str">"Create Jenkins Projects"</span>)
-myApp = App.open(<span class="str">"C:\Program Files (x86)\Google\Chrome\Application\chrome"</span>)
+myApp = App.open(<span class="str">"C:\Program Files (x86)\Google\Chrome\Application\chrome http://10.176.32.6/view/HPCC-5.x/\n"</span>)
 <span class="skw">wait</span>(<span class="dig">5</span>)
-<span class="skw">type</span>(<span class="str">"http://10.176.32.6/view/HPCC-5.x/\n"</span>)
-<span class="skw">wait</span>(<span class="dig">2</span>)
-
+<span class="cmt">#type("http://10.176.32.6/view/HPCC-5.x/\n")
+</span><span class="cmt">#wait(2)
+</span>
 <span class="skw">click</span>(<img src="1424364351024.png" />)
 
 <span class="skw">wait</span>(<span class="dig">2</span>)
@@ -146,14 +146,26 @@ wheel(loc, WHEEL_DOWN, <span class="dig">5</span>)
 </span><span class="cmt"># ECLIDE Project                             #
 </span><span class="cmt">#                                            #
 </span><span class="cmt">##############################################
-</span><span class="skw">click</span>(<img src="1424381363527.png" />)
+</span><span class="skw">click</span>(<img src="1424447727178.png" />)
+
+
 <span class="skw">wait</span>(<span class="dig">3</span>)
 <span class="skw">click</span>(<img src="1424380583579.png" />)
 <span class="skw">wait</span>(<span class="dig">2</span>)
 <span class="skw">click</span>(<img src="1424380615452.png" />)
 <span class="skw">wait</span>(<span class="dig">1</span>)
-<span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">60</span>):
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">50</span>):
    <span class="skw">type</span>(Key.DOWN)
+<span class="skw">wait</span>(<span class="dig">1</span>)
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">30</span>):
+   <span class="skw">type</span>(Key.DOWN)
+   <span class="kw">if</span> exists(<img src="1424380709407.png" />):
+       <span class="kw">break</span>
+
+<span class="skw">wait</span>(<span class="dig">3</span>)
+<span class="skw">type</span>(Key.DOWN)
+<span class="skw">type</span>(Key.DOWN)
+<span class="skw">wait</span>(<span class="dig">2</span>)
 <span class="skw">click</span>(<img src="1424380709407.png" />)
 <span class="skw">wait</span>(<span class="dig">1</span>)
 <span class="skw">type</span>(<span class="str">"CE-graphcontrol-Win-32bit-"</span> + version + <span class="str">"-"</span> + build_sequence)
@@ -185,11 +197,15 @@ wheel(loc, WHEEL_DOWN, <span class="dig">5</span>)
 <span class="skw">click</span>(<img src="1424376840150.png" />)
 <span class="skw">wait</span>(<span class="dig">2</span>)
 
-<span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">5</span>):
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">50</span>):
+   <span class="skw">type</span>(Key.DOWN)
+   <span class="kw">if</span> exists(<img src="1424376906302.png" />):
+       <span class="kw">break</span>
+
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">3</span>):
    <span class="skw">type</span>(Key.DOWN)
 
-
-<span class="skw">wait</span>(<span class="dig">2</span>)
+<span class="skw">wait</span>(<span class="dig">1</span>)
 <span class="skw">click</span>(<img src="1424376906302.png" />)
 <span class="skw">click</span>(<img src="1424376926049.png" />)
 <span class="skw">type</span>(<span class="str">".*"</span> + version + <span class="str">"-"</span> + build_sequence)
