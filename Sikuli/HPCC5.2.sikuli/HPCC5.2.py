@@ -1,4 +1,4 @@
-build_sequence = "rc3"
+build_sequence = "rc6"
 version = "5.2.0"
 ##############################################
 #                                            #
@@ -8,13 +8,13 @@ version = "5.2.0"
 
 type("Create Jenkins Projects")
 myApp = App.open("C:\Program Files (x86)\Google\Chrome\Application\chrome http://10.176.32.6/view/HPCC-5.x/\n")
-wait(5)
+wait(10)
 #type("http://10.176.32.6/view/HPCC-5.x/\n")
 #wait(2)
 
 click("1424364351024.png")
 
-wait(2)
+wait(5)
 click("1424364405084.png")
 wait(2)
 click("1424371251191.png")
@@ -38,11 +38,13 @@ project_prefix_list = [
         'CE-graphcontrol-Win-32bit-',
         'CE-graphcontrol-Win-64bit-',
         'CE-Platform-Libraries-Win32-',
+        'CE-Platform-Libraries-Win64-',
         'EE-Candidate-',
         'EE-Candidate-withplugins-',
         'LN-Candidate-',
         'LN-Candidate-Clienttools-',
-        'LN-Candidate-withplugins-'
+        'LN-Candidate-withplugins-',
+        'LN-Clienttools-win-32bit-'
         ]
 
 for project_prefix in project_prefix_list:
@@ -74,11 +76,9 @@ wait(1)
 # ECLIDE Project                             #
 #                                            #
 ##############################################
-click("1424447727178.png")
-
-
-wait(3)
-click("1424380583579.png")
+click("1426087140656.png")
+wait(2)
+type("CE-Candidate-ECLIDE-Win-32bit-" + version + "-" + build_sequence + "\n")
 wait(2)
 click("1424380615452.png")
 wait(1)
@@ -93,18 +93,22 @@ for i in range(30):
 wait(3)
 type(Key.DOWN)
 type(Key.DOWN)
+type(Key.DOWN)
+type(Key.DOWN)
 wait(2)
 click("1424380709407.png")
-wait(1)
+wait(2)
 type("CE-graphcontrol-Win-32bit-" + version + "-" + build_sequence)
-wait(1)
+wait(5)
+
 for i in range(10):
     type(Key.TAB)
-wait(1)
+    wait(1)
+wait(3)
 click("1424380709407.png")
 wait(1)
 type("CE-Candidate-clienttools-win-32bit-" + version + "-" + build_sequence)
-wait(1)
+wait(2)
 click("1424380968663.png")
 wait(2)
 ##############################################

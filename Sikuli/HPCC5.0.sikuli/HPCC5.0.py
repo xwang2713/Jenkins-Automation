@@ -1,4 +1,4 @@
-build_sequence = "rc2"
+build_sequence = "rc3"
 version = "5.0.6"
 
 ##############################################
@@ -47,7 +47,8 @@ project_prefix_list = [
         'EE-Candidate-withplugins-',
         'LN-Candidate-',
         'LN-Candidate-Clienttools-',
-        'LN-Candidate-withplugins-'
+        'LN-Candidate-withplugins-',
+        'LN-Clienttools-win-32bit-'
         ]
 
 for project_prefix in project_prefix_list:
@@ -80,10 +81,9 @@ wait(1)
 # ECLIDE Project                             #
 #                                            #
 ##############################################
-click("1424450454529.png")
-
-wait(3)
-click("1424380583579.png")
+click("1426087140656.png")
+wait(2)
+type("CE-Candidate-ECLIDE-Win-32bit-" + version + "-" + build_sequence + "\n")
 wait(2)
 click("1424380615452.png")
 wait(1)
@@ -98,13 +98,16 @@ for i in range (30):
 wait(3)
 type(Key.DOWN)
 type(Key.DOWN)
+type(Key.DOWN)
+type(Key.DOWN)
 wait(2)
 click("1424380709407.png")
-wait(1)
+wait(2)
 type("CE-graphcontrol-Win-32bit-" + version + "-" + build_sequence)
-wait(1)
+wait(2)
 for i in range(10):
     type(Key.TAB)
+    wait(1)
     
 wait(1)
 click("1424380709407.png")

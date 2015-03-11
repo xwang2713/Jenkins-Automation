@@ -70,7 +70,7 @@
 <h2>HPCC5.0.sikuli\HPCC5.0.sikuli</h2> <a href="HPCC5.0.sikuli\HPCC5.0.zip">(Download this script)</a>
 </div>
 <pre class="sikuli-code">
-build_sequence = <span class="str">"rc2"</span>
+build_sequence = <span class="str">"rc3"</span>
 version = <span class="str">"5.0.6"</span>
 
 <span class="cmt">##############################################
@@ -119,7 +119,8 @@ myApp = App.open(<span class="str">"C:\Program Files (x86)\Google\Chrome\Applica
         <span class="str">'EE-Candidate-withplugins-'</span>,
         <span class="str">'LN-Candidate-'</span>,
         <span class="str">'LN-Candidate-Clienttools-'</span>,
-        <span class="str">'LN-Candidate-withplugins-'</span>
+        <span class="str">'LN-Candidate-withplugins-'</span>,
+        <span class="str">'LN-Clienttools-win-32bit-'</span>
         ]
 
 <span class="kw">for</span> project_prefix <span class="kw">in</span> project_prefix_list:
@@ -152,10 +153,9 @@ wheel(loc, WHEEL_DOWN, <span class="dig">5</span>)
 </span><span class="cmt"># ECLIDE Project                             #
 </span><span class="cmt">#                                            #
 </span><span class="cmt">##############################################
-</span><span class="skw">click</span>(<img src="1424450454529.png" />)
-
-<span class="skw">wait</span>(<span class="dig">3</span>)
-<span class="skw">click</span>(<img src="1424380583579.png" />)
+</span><span class="skw">click</span>(<img src="1426087140656.png" />)
+<span class="skw">wait</span>(<span class="dig">2</span>)
+<span class="skw">type</span>(<span class="str">"CE-Candidate-ECLIDE-Win-32bit-"</span> + version + <span class="str">"-"</span> + build_sequence + <span class="str">"\n"</span>)
 <span class="skw">wait</span>(<span class="dig">2</span>)
 <span class="skw">click</span>(<img src="1424380615452.png" />)
 <span class="skw">wait</span>(<span class="dig">1</span>)
@@ -170,13 +170,16 @@ wheel(loc, WHEEL_DOWN, <span class="dig">5</span>)
 <span class="skw">wait</span>(<span class="dig">3</span>)
 <span class="skw">type</span>(Key.DOWN)
 <span class="skw">type</span>(Key.DOWN)
+<span class="skw">type</span>(Key.DOWN)
+<span class="skw">type</span>(Key.DOWN)
 <span class="skw">wait</span>(<span class="dig">2</span>)
 <span class="skw">click</span>(<img src="1424380709407.png" />)
-<span class="skw">wait</span>(<span class="dig">1</span>)
+<span class="skw">wait</span>(<span class="dig">2</span>)
 <span class="skw">type</span>(<span class="str">"CE-graphcontrol-Win-32bit-"</span> + version + <span class="str">"-"</span> + build_sequence)
-<span class="skw">wait</span>(<span class="dig">1</span>)
+<span class="skw">wait</span>(<span class="dig">2</span>)
 <span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">10</span>):
     <span class="skw">type</span>(Key.TAB)
+    <span class="skw">wait</span>(<span class="dig">1</span>)
 
 <span class="skw">wait</span>(<span class="dig">1</span>)
 <span class="skw">click</span>(<img src="1424380709407.png" />)
