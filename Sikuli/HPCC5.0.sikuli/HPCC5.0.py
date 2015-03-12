@@ -1,5 +1,5 @@
-build_sequence = "rc3"
-version = "5.0.6"
+build_sequence = "rc1"
+version = "5.0.8"
 
 ##############################################
 #                                            #
@@ -12,9 +12,11 @@ type("Create Jenkins Projects")
 myApp = App.open("C:\Program Files (x86)\Google\Chrome\Application\chrome http://10.176.32.6/view/HPCC-5.x/\n")
 wait(5)
 
-click("1424379630194.png")
-
+click("1426087140656.png")
 wait(2)
+type("HPCC-" + version + "\n")
+wait(2)
+
 click("1424364405084.png")
 wait(2)
 click("1424379685177.png")

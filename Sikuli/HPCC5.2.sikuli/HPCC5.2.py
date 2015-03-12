@@ -12,9 +12,11 @@ wait(10)
 #type("http://10.176.32.6/view/HPCC-5.x/\n")
 #wait(2)
 
-click("1424364351024.png")
+click("1426087140656.png")
+wait(2)
+type("HPCC-" + version + "\n")
+wait(2)
 
-wait(5)
 click("1424364405084.png")
 wait(2)
 click("1424371251191.png")

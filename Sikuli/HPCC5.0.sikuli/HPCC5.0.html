@@ -70,8 +70,8 @@
 <h2>HPCC5.0.sikuli\HPCC5.0.sikuli</h2> <a href="HPCC5.0.sikuli\HPCC5.0.zip">(Download this script)</a>
 </div>
 <pre class="sikuli-code">
-build_sequence = <span class="str">"rc3"</span>
-version = <span class="str">"5.0.6"</span>
+build_sequence = <span class="str">"rc1"</span>
+version = <span class="str">"5.0.8"</span>
 
 <span class="cmt">##############################################
 </span><span class="cmt">#                                            #
@@ -84,9 +84,11 @@ version = <span class="str">"5.0.6"</span>
 myApp = App.open(<span class="str">"C:\Program Files (x86)\Google\Chrome\Application\chrome http://10.176.32.6/view/HPCC-5.x/\n"</span>)
 <span class="skw">wait</span>(<span class="dig">5</span>)
 
-<span class="skw">click</span>(<img src="1424379630194.png" />)
-
+<span class="skw">click</span>(<img src="1426087140656.png" />)
 <span class="skw">wait</span>(<span class="dig">2</span>)
+<span class="skw">type</span>(<span class="str">"HPCC-"</span> + version + <span class="str">"\n"</span>)
+<span class="skw">wait</span>(<span class="dig">2</span>)
+
 <span class="skw">click</span>(<img src="1424364405084.png" />)
 <span class="skw">wait</span>(<span class="dig">2</span>)
 <span class="skw">click</span>(<img src="1424379685177.png" />)
