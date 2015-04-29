@@ -122,7 +122,8 @@ myApp = App.open(<span class="str">"C:\Program Files (x86)\Google\Chrome\Applica
         <span class="str">'LN-Candidate-'</span>,
         <span class="str">'LN-Candidate-Clienttools-'</span>,
         <span class="str">'LN-Candidate-withplugins-'</span>,
-        <span class="str">'LN-Clienttools-win-32bit-'</span>
+        <span class="str">'LN-Clienttools-win-32bit-'</span>,
+        <span class="str">'Post-Build-Community-'</span>
         ]
 
 <span class="kw">for</span> project_prefix <span class="kw">in</span> project_prefix_list:
@@ -133,7 +134,7 @@ myApp = App.open(<span class="str">"C:\Program Files (x86)\Google\Chrome\Applica
 
 
 <span class="cmt">#Workflow Parameters
-</span><span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">11</span>):
+</span><span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">12</span>):
     <span class="skw">type</span>(Key.TAB)
     <span class="kw">if</span> (i == <span class="dig">4</span>):
         <span class="skw">type</span>(version)
