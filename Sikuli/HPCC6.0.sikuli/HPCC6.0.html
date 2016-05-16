@@ -67,23 +67,23 @@
    </head>
 <body>
 <div class="info">
-<h2>HPCC6.0.sikuli\HPCC6.0.sikuli</h2> <a href="HPCC6.0.sikuli\HPCC6.0.zip">(Download this script)</a>
+<h2>HPCC6.0.sikuli</h2> <a href="HPCC6.0.zip">(Download this script)</a>
 </div>
 <pre class="sikuli-code">
 build_sequence = <span class="str">"rc1"</span>
 version = <span class="str">"6.0.0"</span>
-<span class="cmt">##############################################
-</span><span class="cmt">#                                            #
-</span><span class="cmt"># Create Workflow projects                   #
-</span><span class="cmt">#                                            #
-</span><span class="cmt">##############################################
-</span>
+<span class="cmt">##############################################</span>
+<span class="cmt">#                                            #</span>
+<span class="cmt"># Create Workflow projects                   #</span>
+<span class="cmt">#                                            #</span>
+<span class="cmt">##############################################</span>
+
 <span class="skw">type</span>(<span class="str">"Create Jenkins Projects"</span>)
 myApp = App.open(<span class="str">"C:\Program Files (x86)\Google\Chrome\Application\chrome http://10.176.32.6/view/HPCC-6.x/\n"</span>)
 <span class="skw">wait</span>(<span class="dig">10</span>)
-<span class="cmt">#type("http://10.176.32.6/view/HPCC-6.x/\n")
-</span><span class="cmt">#wait(2)
-</span>
+<span class="cmt">#type("http://10.176.32.6/view/HPCC-6.x/\n")</span>
+<span class="cmt">#wait(2)</span>
+
 <span class="skw">click</span>(<img src="1426087140656.png" />)
 <span class="skw">wait</span>(<span class="dig">2</span>)
 <span class="skw">type</span>(<span class="str">"HPCC-"</span> + version + <span class="str">"\n"</span>)
@@ -106,8 +106,8 @@ myApp = App.open(<span class="str">"C:\Program Files (x86)\Google\Chrome\Applica
 <span class="skw">type</span>(<span class="str">"WF-HPCC-"</span> + version + <span class="str">"-"</span> + build_sequence)
 <span class="skw">wait</span>(<span class="dig">1</span>)
 
-<span class="cmt"># Defined jobs
-</span>project_prefix_list = [
+<span class="cmt"># Defined jobs</span>
+project_prefix_list = [
         <span class="str">'CE-Candidate-'</span>,
         <span class="str">'CE-Candidate-clienttools-'</span>,
         <span class="str">'CE-Candidate-clienttools-win-32bit-'</span>,
@@ -139,10 +139,10 @@ myApp = App.open(<span class="str">"C:\Program Files (x86)\Google\Chrome\Applica
 
 
 
-<span class="cmt">#Workflow Parameters
-</span><span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">12</span>):
+<span class="cmt">#Workflow Parameters</span>
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">12</span>):
     <span class="skw">type</span>(Key.TAB)
-    <span class="kw">if</span> (i == <span class="dig">5</span>):
+    <span class="kw">if</span> (i == <span class="dig">4</span>):
         <span class="skw">type</span>(version)
     <span class="kw">else</span>:
         <span class="skw">type</span>(version + <span class="str">"-"</span> + build_sequence)
@@ -152,15 +152,16 @@ myApp = App.open(<span class="str">"C:\Program Files (x86)\Google\Chrome\Applica
 loc = SCREEN.getCenter()
 wheel(loc, WHEEL_DOWN, <span class="dig">5</span>)
 <span class="skw">wait</span>(<span class="dig">2</span>)
-<span class="skw">click</span>(<img src="1426786938291.png" />)
+<span class="skw">click</span>(<img src="1461690598079.png" />)
+
 <span class="skw">wait</span>(<span class="dig">3</span>)
-<span class="cmt">##############################################
-</span><span class="cmt">#                                            #
-</span><span class="cmt"># Add Clienttools and Graphcontrol to        #
-</span><span class="cmt"># ECLIDE Project                             #
-</span><span class="cmt">#                                            #
-</span><span class="cmt">##############################################
-</span><span class="skw">click</span>(<img src="1426087140656.png" />)
+<span class="cmt">##############################################</span>
+<span class="cmt">#                                            #</span>
+<span class="cmt"># Add Clienttools and Graphcontrol to        #</span>
+<span class="cmt"># ECLIDE Project                             #</span>
+<span class="cmt">#                                            #</span>
+<span class="cmt">##############################################</span>
+<span class="skw">click</span>(<img src="1426087140656.png" />)
 <span class="skw">wait</span>(<span class="dig">4</span>)
 <span class="skw">type</span>(<span class="str">"CE-Candidate-ECLIDE-Win-32bit-"</span> + version + <span class="str">"-"</span> + build_sequence + <span class="str">"\n"</span>)
 <span class="skw">wait</span>(<span class="dig">4</span>)
@@ -192,12 +193,12 @@ wheel(loc, WHEEL_DOWN, <span class="dig">5</span>)
 <span class="skw">wait</span>(<span class="dig">2</span>)
 <span class="skw">click</span>(<img src="1426787164469.png" />)
 <span class="skw">wait</span>(<span class="dig">2</span>)
-<span class="cmt">##############################################
-</span><span class="cmt">#                                            #
-</span><span class="cmt"># Create List View                           #
-</span><span class="cmt">#                                            #
-</span><span class="cmt">##############################################
-</span><span class="skw">click</span>(<img src="1426787234809.png" />)
+<span class="cmt">##############################################</span>
+<span class="cmt">#                                            #</span>
+<span class="cmt"># Create List View                           #</span>
+<span class="cmt">#                                            #</span>
+<span class="cmt">##############################################</span>
+<span class="skw">click</span>(<img src="1426787234809.png" />)
 
 <span class="skw">wait</span>(<span class="dig">10</span>)
 <span class="skw">click</span>(<img src="1426787245264.png" />)
@@ -227,6 +228,7 @@ wheel(loc, WHEEL_UP, <span class="dig">5</span>)
 <span class="skw">wait</span>(<span class="dig">2</span>)
 
 <span class="cmt">#myApp.close()</span>
+
 </pre>
 </body>
 </html>

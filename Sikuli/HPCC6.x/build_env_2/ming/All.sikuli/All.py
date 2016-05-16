@@ -1,4 +1,4 @@
-build_sequence = "rc3"
+build_sequence = "rc5"
 version = "6.0.0"
 ##############################################
 #                                            #
@@ -104,7 +104,7 @@ click("1461691336330.png")
 
 
 wait(2)
-type("CE-GC-W32-" + version + "-" + build_sequence)
+type("CE-GC-W32-" + version + "-" + build_sequence + "\n")
 wait(5)
 
 for i in range(10):
@@ -114,7 +114,7 @@ wait(3)
 click("1461691502860.png")
 
 wait(1)
-type("CE-Candidate-Clienttools-Win32-" + version + "-" + build_sequence)
+type("CE-Candidate-Clienttools-Win32-" + version + "-" + build_sequence + "\n")
 wait(2)
 click("1461691591882.png")
 

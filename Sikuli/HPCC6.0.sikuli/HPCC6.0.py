@@ -70,7 +70,7 @@ for project_prefix in project_prefix_list:
 #Workflow Parameters
 for i in range(12):
     type(Key.TAB)
-    if (i == 5):
+    if (i == 4):
         type(version)
     else:
         type(version + "-" + build_sequence)
@@ -80,7 +80,8 @@ wait(2)
 loc = SCREEN.getCenter()
 wheel(loc, WHEEL_DOWN, 5)
 wait(2)
-click("1426786938291.png")
+click("1461690598079.png")
+
 wait(3)
 ##############################################
 #                                            #
