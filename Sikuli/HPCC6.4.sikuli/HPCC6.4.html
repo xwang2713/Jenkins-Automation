@@ -1,0 +1,240 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>HPCC6.4.sikuli\HPCC6.4.sikuli</h2> <a href="HPCC6.4.sikuli\HPCC6.4.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+build_sequence = <span class="str">"1"</span>
+version = <span class="str">"6.4.18"</span>
+<span class="cmt">##############################################
+</span><span class="cmt">#                                            #
+</span><span class="cmt"># Create Workflow projects                   #
+</span><span class="cmt">#                                            #
+</span><span class="cmt">##############################################
+</span>
+<span class="skw">type</span>(<span class="str">"Create Jenkins Projects"</span>)
+myApp = App.open(<span class="str">"C:\Program Files (x86)\Google\Chrome\Application\chrome http://10.240.32.243/view/HPCC-6.x/\n"</span>)
+<span class="skw">wait</span>(<span class="dig">5</span>)
+<span class="cmt">#type("http://10.240.32.243/view/HPCC-6.x/\n")
+</span><span class="cmt">#wait(2)
+</span>
+<span class="skw">click</span>(<img src="1483460695919.png" />)
+<span class="skw">wait</span>(<span class="dig">2</span>)
+<span class="skw">type</span>(<span class="str">"HPCC-"</span> + version + <span class="str">"\n"</span>)
+<span class="skw">wait</span>(<span class="dig">2</span>)
+
+<span class="skw">click</span>(<img src="1426786909458.png" />)
+<span class="skw">wait</span>(<span class="dig">2</span>)
+<span class="skw">click</span>(<img src="1486563544735.png" />)
+<span class="skw">wait</span>(<span class="dig">2</span>)
+<span class="skw">type</span>(Key.DOWN)
+<span class="skw">type</span>(Key.DOWN)
+<span class="skw">type</span>(Key.DOWN)
+<span class="skw">type</span>(Key.DOWN)
+<span class="skw">wait</span>(<span class="dig">1</span>)
+<span class="skw">click</span>(<img src="1486563711315.png" />)
+<span class="skw">wait</span>(<span class="dig">1</span>)
+<span class="skw">click</span>(<img src="1486563119703.png" />)
+<span class="skw">type</span>(<span class="str">"WF-HPCC-"</span> + version + <span class="str">"-"</span> + build_sequence)
+<span class="skw">wait</span>(<span class="dig">1</span>)
+
+<span class="cmt"># Defined jobs
+</span>project_prefix_list = [
+        <span class="str">'CE-Candidate-'</span>,
+        <span class="str">'CE-Candidate-clienttools-'</span>,
+        <span class="str">'CE-Candidate-clienttools-osx-'</span>,
+        <span class="str">'CE-Candidate-docs-'</span>,
+        <span class="str">'CE-Candidate-ECLIDE-Win-32bit-'</span>,
+        <span class="str">'CE-Candidate-ECLIDE-Win64bit-'</span>,
+        <span class="str">'CE-Candidate-gangliamonitoring-'</span>,
+        <span class="str">'CE-Candidate-graphcontrol-'</span>,
+        <span class="str">'CE-Candidate-nagiosmonitoring-'</span>,
+        <span class="str">'CE-Candidate-Plugins-'</span>,
+        <span class="str">'CE-Candidate-vm-32bit-'</span>,
+        <span class="str">'CE-Candidate-vm-64bit-'</span>,
+        <span class="str">'CE-Candidate-CT-W32-'</span>,
+        <span class="str">'CE-Candidate-CT-W64-'</span>,
+        <span class="str">'CE-GC-W32-'</span>,
+        <span class="str">'CE-GC-W64-'</span>,
+        <span class="str">'EE-Candidate-'</span>,
+        <span class="str">'LN-Candidate-Clienttools-'</span>,
+        <span class="str">'LN-Candidate-with-Plugins-'</span>,
+        <span class="str">'LN-CT-W32-'</span>,
+        <span class="str">'LN-CT-W64-'</span>,
+        <span class="str">'WSSQL-Candidate-'</span>
+        ]
+
+<span class="kw">for</span> project_prefix <span class="kw">in</span> project_prefix_list:
+    <span class="skw">type</span>(Key.TAB)
+    <span class="skw">type</span>(project_prefix + version + <span class="str">"-"</span> + build_sequence)
+    <span class="skw">wait</span>(<span class="dig">1</span>)
+
+
+
+<span class="cmt">#Workflow Parameters
+</span><span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">8</span>):
+    <span class="skw">type</span>(Key.TAB)
+    <span class="kw">if</span> (i == <span class="dig">4</span>):
+        <span class="skw">type</span>(version)
+    <span class="kw">else</span>:
+        <span class="skw">type</span>(version + <span class="str">"-"</span> + build_sequence)
+    <span class="skw">wait</span>(<span class="dig">1</span>)
+
+<span class="skw">wait</span>(<span class="dig">2</span>)
+loc = SCREEN.getCenter()
+wheel(loc, WHEEL_DOWN, <span class="dig">5</span>)
+<span class="skw">wait</span>(<span class="dig">2</span>)
+<span class="skw">click</span>(<img src="1486563135135.png" />)
+<span class="skw">wait</span>(<span class="dig">3</span>)
+<span class="cmt">##############################################
+</span><span class="cmt">#                                            #
+</span><span class="cmt"># Add Clienttools Docs, and Graphcontrol to  #
+</span><span class="cmt"># ECLIDE Project                             #
+</span><span class="cmt">#                                            #
+</span><span class="cmt">##############################################
+</span><span class="skw">click</span>(<img src="1486563149401.png" />)
+<span class="skw">wait</span>(<span class="dig">4</span>)
+<span class="skw">type</span>(<span class="str">"CE-Candidate-ECLIDE-Win-32bit-"</span> + version + <span class="str">"-"</span> + build_sequence + <span class="str">"\n"</span>)
+<span class="skw">wait</span>(<span class="dig">4</span>)
+<span class="skw">click</span>(<img src="1486563170834.png" />)
+<span class="skw">wait</span>(<span class="dig">1</span>)
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">100</span>):
+   <span class="skw">type</span>(Key.DOWN)
+<span class="skw">wait</span>(<span class="dig">1</span>)
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">50</span>):
+   <span class="skw">type</span>(Key.DOWN)
+   <span class="kw">if</span> exists(<img src="1517414874033.png" />):
+       <span class="kw">break</span>
+
+<span class="skw">wait</span>(<span class="dig">3</span>)
+<span class="skw">type</span>(Key.DOWN)
+<span class="skw">wait</span>(<span class="dig">2</span>)
+<span class="skw">click</span>(<img src="1517414874033.png" />)
+<span class="skw">wait</span>(<span class="dig">2</span>)
+<span class="skw">type</span>(<span class="str">"CE-Candidate-docs-"</span> + version + <span class="str">"-"</span> + build_sequence)
+<span class="skw">wait</span>(<span class="dig">5</span>)
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">10</span>):
+    <span class="skw">type</span>(Key.TAB)
+    <span class="skw">wait</span>(<span class="dig">1</span>)
+
+<span class="skw">type</span>(Key.DOWN)
+<span class="skw">wait</span>(<span class="dig">2</span>)
+<span class="skw">click</span>(<img src="1517414874033.png" />)
+<span class="skw">wait</span>(<span class="dig">2</span>)
+<span class="skw">type</span>(<span class="str">"CE-GC-W32-"</span> + version + <span class="str">"-"</span> + build_sequence)
+<span class="skw">wait</span>(<span class="dig">5</span>)
+
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">10</span>):
+    <span class="skw">type</span>(Key.TAB)
+    <span class="skw">wait</span>(<span class="dig">1</span>)
+<span class="skw">wait</span>(<span class="dig">3</span>)
+<span class="skw">click</span>(<img src="1517414874033.png" />)
+<span class="skw">wait</span>(<span class="dig">1</span>)
+<span class="skw">type</span>(<span class="str">"CE-Candidate-CT-W32-"</span> + version + <span class="str">"-"</span> + build_sequence)
+<span class="skw">wait</span>(<span class="dig">2</span>)
+<span class="skw">click</span>(<img src="1486563310807.png" />)
+<span class="skw">wait</span>(<span class="dig">2</span>)
+<span class="cmt">##############################################
+</span><span class="cmt">#                                            #
+</span><span class="cmt"># Create List View                           #
+</span><span class="cmt">#                                            #
+</span><span class="cmt">##############################################
+</span><span class="skw">click</span>(<img src="1486563336911.png" />)
+
+<span class="skw">wait</span>(<span class="dig">3</span>)
+<span class="skw">click</span>(<img src="1486563343080.png" />)
+wheel(loc, WHEEL_UP, <span class="dig">5</span>)
+<span class="skw">wait</span>(<span class="dig">2</span>)
+<span class="skw">click</span>(<img src="1486563355570.png" />)
+<span class="skw">wait</span>(<span class="dig">1</span>)
+<span class="skw">type</span>(<span class="str">"HPCC-"</span> + version + <span class="str">"-"</span> + build_sequence)
+<span class="skw">click</span>(<img src="1486563380531.png" />)
+<span class="skw">wait</span>(<span class="dig">1</span>)
+<span class="skw">click</span>(<img src="1486563395035.png" />)
+<span class="skw">wait</span>(<span class="dig">2</span>)
+
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">50</span>):
+   <span class="skw">type</span>(Key.DOWN)
+   <span class="kw">if</span> exists(<img src="1483461236486.png" />):
+       <span class="kw">break</span>
+
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">3</span>):
+   <span class="skw">type</span>(Key.DOWN)
+
+<span class="skw">wait</span>(<span class="dig">1</span>)
+<span class="skw">click</span>(<img src="1483461236486.png" />)
+<span class="skw">click</span>(<img src="1483461280975.png" />)
+<span class="skw">type</span>(<span class="str">".*"</span> + version + <span class="str">"-"</span> + build_sequence)
+<span class="skw">click</span>(<img src="1483461291104.png" />)
+<span class="skw">wait</span>(<span class="dig">2</span>)
+
+<span class="cmt">#myApp.close()</span>
+</pre>
+</body>
+</html>
