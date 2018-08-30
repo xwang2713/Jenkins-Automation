@@ -11,7 +11,7 @@ Requirements
 + Linux (maybe need recapture the images)
 + Mac (maybe need recapture the images)
 + Sikuli
-+ Java 6+
++ Java 6, 7 or 8
 + Chrome
 
 
@@ -29,7 +29,7 @@ Usage
 -----
 
 
-Currently there are two sikuli applications. HPCC5.0.sikuli is for generating HPCC 5.0.x projects. 
+Currently there are multiple sikuli applications. For instance, HPCC5.0.sikuli is for generating HPCC 5.0.x projects. 
 HPCC5.2.sikuli is for generating HPCC 5.2.x projects.
 
 + It is better to close other Chrome or at lest move them to the top of the Windows
