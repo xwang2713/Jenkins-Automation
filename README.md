@@ -3,9 +3,73 @@ Jenkins-Automation
 
 This repository has some applications to help automate HPCC builds on Jenkins
 
+Selenium Requirements
+---------------------
 
-Requirements
-------------
++ Windows OS
++ Linux OS
++ MacOS
++ Selenium Webdriver
++ Chromedriver
++ Google Chrome Browser
++ Python 3
+
+Install Selenium and dependencies
+---------------------------------
+
++ Download Selenium from https://www.seleniumhq.org/
++ Download Chromedriver from http://chromedriver.chromium.org/downloads
++ Download Chrome from https://www.google.com/chrome/b/
++ Download Python
+    + Windows:
+        + https://www.python.org/downloads/windows/
+    + MacOS:
+        + https://www.python.org/downloads/mac-osx/
+    + Linux:
+        + CentOS:
+            ```
+            sudo yum update -y
+            sudo yum install python36u
+            ```
+        + Ubuntu
+            ```
+            sudo apt-get update
+            sudo apt-get instal python3.6
+            ```
+ Usage
+ -----
+
+```
+Usage: hpcc-build.py -v <version> -s <build sequence> -p <previous platform> -i <previous ide>
+
+Options:
+  -h, --help            show this help message and exit
+  -v BUILD_VER_SEQ, --version=BUILD_VER_SEQ
+                        Build versions are in the form of XX.XX.XX-X. Ex.
+                        7.2.8-rc1
+  -p PREV_PLATFORM_RC, --prev-platform-rc=PREV_PLATFORM_RC
+                        Previous full platform rc version from current
+                        release. Ex. 7.2.6-rc1
+  -q PREV_PLATFORM_GOLD, --prev-platform-gold=PREV_PLATFORM_GOLD
+                        Previous full platform gold version from current
+                        release. Ex. 7.2.6-1
+  -i PREV_ECLIDE_RC, --prev-eclide-rc=PREV_ECLIDE_RC
+                        Previous full eclide rc version from current release.
+                        Ex. 7.2.6-rc1
+  -j PREV_ECLIDE_GOLD, --prev-eclide-gold=PREV_ECLIDE_GOLD
+                        Previous full eclide gold version from current
+                        release. Ex. 7.2.6-1
+```
+
+
+Examples of versions and sequences:
++ VERSION: 7.2.8, 7.0.32
++ SEQUENCE: 1, rc2
+
+
+
+Sikuli Requirements
+-------------------
 
 + Windows
 + Linux (maybe need recapture the images)
@@ -37,6 +101,3 @@ HPCC5.2.sikuli is for generating HPCC 5.2.x projects.
 + From "File" open the sikuli application. For example HPCC5.2.sikuli
 + Modify "build_tag" and "version"
 + Click "Run" which may prompt you save and run.
- 
-
-
