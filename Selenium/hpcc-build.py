@@ -138,6 +138,8 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
             workflowJob.send_keys(full_version)
         elif (job_prefix == 'VERSION'):
             workflowJob.send_keys(build_version)
+        elif (job_prefix == 'SERIES'):
+            workflowJob.send_keys(build_series)
         else:
             workflowJob.send_keys(job_prefix + "-" + full_version)
 
@@ -145,7 +147,7 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
     buttonElem = driver.find_element_by_xpath("//div[@id='msg']/input[3]")
     buttonElem.click()
 
-# setup ECLIDE build
+# set up ECLIDE build
 def setupECLIDE(driver, full_version, search):
     search(driver, "CE-Candidate-ECLIDE-Win32-" + full_version)
 
@@ -159,8 +161,6 @@ def setupECLIDE(driver, full_version, search):
 
     # important!
     sleep(1)
-    #wait = WebDriverWait(driver, 10)
-    #wait.until(EC.element_to_be_clickable((By.XPATH, "(//input[@name='_.projectName'])[3]")))
 
     # xpaths of artifacts' name input box
     artifacts = driver.find_elements_by_xpath("//input[@name='_.filter']")
@@ -184,7 +184,7 @@ def setupECLIDE(driver, full_version, search):
 
     saveConfig = driver.find_element_by_xpath("//button[contains(.,'Save')]")
     saveConfig.click()
-    
+
 # create new view
 def createView(driver, full_version):
     allViewElem = driver.find_element_by_id("jenkins-name-icon")
@@ -199,6 +199,7 @@ def createView(driver, full_version):
     # scroll to the location of the radio button to click it
     driver.execute_script("window.scrollTo(23, 3325)")
     listViewElem = driver.find_element_by_xpath("(//input[@name='mode'])[2]")
+    sleep(1)
     listViewElem.click()
 
     okButtonElem = driver.find_element_by_id("ok-button")
@@ -211,6 +212,7 @@ def createView(driver, full_version):
     sleep(1)
 
     regxElem = driver.find_element_by_name("includeRegex")
+    sleep(1)
     regxElem.send_keys(".*" + full_version)
 
     okButtonElem = driver.find_element_by_xpath("//button[contains(.,'OK')]")
@@ -225,7 +227,7 @@ def createView(driver, full_version):
 # Main 
 def main():
     parser = OptionParser()
-    parser.set_usage("Usage: hpcc-build.py -v <version> -s <build sequence> -p <previous platform> -i <previous ide>")
+    parser.set_usage("Usage: hpcc-build.py v <version> -p <prev_platform_rc_version> -q <prev_platform_gold_version> -i <prev_ide_rc_version> -j <prev_ide_gold_version>")
     parser.add_option("-v", "--version", type="string", dest="build_ver_seq",
                     help="Build versions are in the form of XX.XX.XX-X. Ex. 7.2.8-rc1")
     parser.add_option("-p", "--prev-platform-rc", type="string", dest="prev_platform_rc", 
@@ -254,7 +256,7 @@ def main():
         except Exception as e:
             print ("Please enter a valid version or type " + os.path.basename(__file__) + " -h for help.")
             sys.exit()
-            
+        
         # install webdriver: pip install webdriver-manager
         # Create a new instance (object) of the Chrome driver
         #driver = webdriver.Chrome(ChromeDriverManager().install())

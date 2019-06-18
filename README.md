@@ -40,7 +40,7 @@ Install Selenium and dependencies
  -----
 
 ```
-Usage: hpcc-build.py -v <version> -s <build sequence> -p <previous platform> -i <previous ide>
+Usage: hpcc-build.py -v <version> -p <prev_platform_rc_version> -q <prev_platform_gold_version> -i <prev_ide_rc_version> -j <prev_ide_gold_version>
 
 Options:
   -h, --help            show this help message and exit
@@ -62,9 +62,10 @@ Options:
 ```
 
 
-Examples of versions and sequences:
-+ VERSION: 7.2.8, 7.0.32
-+ SEQUENCE: 1, rc2
+Note: All the arguments use full version
+Full Version Example: 7.2.16-rc1, 7.2.16-1
+
+
 
 
 
