@@ -84,8 +84,10 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
     if (re.search("^\d*", build_series).group() == "7"):
         if (build_series == "7.0.x"):
             template.select_by_value("HPCC-Template-All-7.0.x")
+        elif (build_series == "7.2.x"):
+            template.select_by_value("HPCC-Template-All-7.2.x")
         else:
-            template.select_by_value("HPCC-Template-All-7.x")
+              template.select_by_value("HPCC-Template-All-7.x")
     elif (re.search("^\d*", build_series).group() == "6"):
         if (build_series == "6.4.x"):
             template.select_by_value("HPCC-Template-All-6.x")
