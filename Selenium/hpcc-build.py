@@ -42,7 +42,7 @@ def search(driver, searchElem):
     searchBox.submit()
 
 # create a workflow if none exists
-def isWorkflow(driver, build_version):
+def isWorkflow(driver, which_jenkins, build_version):
     try:
         # find element by text
         textElem = driver.find_element_by_link_text("Create Workflow")
@@ -59,7 +59,10 @@ def isWorkflow(driver, build_version):
         createItem.click()
         workflowName = driver.find_element_by_id("name")
         workflowName.send_keys("HPCC-" + build_version)
-        itemType = driver.find_element_by_xpath("//div[@id='j-add-item-type-uncategorized']/ul/li")
+        if (which_jenkins == "cloud_jenkins"):
+            itemType = driver.find_element_by_xpath("//div[@id='j-add-item-type-uncategorized']/ul/li[2]/label")
+        elif (which_jenkins == "old_jenkins"):
+            itemType = driver.find_element_by_xpath("//div[@id='j-add-item-type-uncategorized']/ul/li[1]/label")
         itemType.click()
         createItem = driver.find_element_by_xpath("//button[@id='ok-button']")
         createItem.click()
@@ -87,7 +90,7 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
         elif (build_series == "7.2.x"):
             template.select_by_value("HPCC-Template-All-7.2.x")
         else:
-              template.select_by_value("HPCC-Template-All-7.x")
+            template.select_by_value("HPCC-Template-All-7.x")
     elif (re.search("^\d*", build_series).group() == "6"):
         if (build_series == "6.4.x"):
             template.select_by_value("HPCC-Template-All-6.x")
@@ -146,7 +149,7 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
             workflowJob.send_keys(job_prefix + "-" + full_version)
 
     #click to create build
-    buttonElem = driver.find_element_by_xpath("//div[@id='msg']/input[3]")
+    buttonElem = driver.find_element_by_xpath("//input[@value='Create']")
     buttonElem.click()
 
 # set up ECLIDE build
@@ -188,7 +191,7 @@ def setupECLIDE(driver, full_version, search):
     saveConfig.click()
 
 # create new view
-def createView(driver, full_version):
+def createView(driver, which_jenkins, full_version):
     allViewElem = driver.find_element_by_id("jenkins-name-icon")
     allViewElem.click()
 
@@ -200,7 +203,10 @@ def createView(driver, full_version):
 
     # scroll to the location of the radio button to click it
     driver.execute_script("window.scrollTo(23, 3325)")
-    listViewElem = driver.find_element_by_xpath("(//input[@name='mode'])[2]")
+    if (which_jenkins == "cloud_jenkins"):
+        listViewElem = driver.find_element_by_xpath("(//input[@name='mode'])[1]")
+    elif (which_jenkins == "old_jenkins"):
+        listViewElem = driver.find_element_by_xpath("(//input[@name='mode'])[2]")
     sleep(1)
     listViewElem.click()
 
@@ -229,7 +235,8 @@ def createView(driver, full_version):
 # Main 
 def main():
     parser = OptionParser()
-    parser.set_usage("Usage: hpcc-build.py v <version> -p <prev_platform_rc_version> -q <prev_platform_gold_version> -i <prev_ide_rc_version> -j <prev_ide_gold_version>")
+    parser.set_usage("Usage: hpcc-build.py -s <server ip> v <version> -p <prev_platform_rc_version> -q <prev_platform_gold_version> -i <prev_ide_rc_version> -j <prev_ide_gold_version>")
+    parser.add_option("-s", "--server-ip", type="string", dest="jenkins_ip", help="Examples: 10.240.61.86, new, old")
     parser.add_option("-v", "--version", type="string", dest="build_ver_seq",
                     help="Build versions are in the form of XX.XX.XX-X. Ex. 7.2.8-rc1")
     parser.add_option("-p", "--prev-platform-rc", type="string", dest="prev_platform_rc", 
@@ -242,6 +249,7 @@ def main():
                     help="Previous full eclide gold version from current release. Ex. 7.2.8-rc1")
     options, args = parser.parse_args()
 
+    server = options.jenkins_ip
     full_version = options.build_ver_seq
     ver_seq = re.split("-",  full_version, 1)
     build_version = ver_seq[0]
@@ -250,7 +258,7 @@ def main():
     prev_platform_gold = options.prev_platform_gold
     prev_eclide_rc = options.prev_eclide_rc
     prev_eclide_gold = options.prev_eclide_gold
-    
+    which_jenkins = ""
     
     if len(args) != 1:
         try:
@@ -264,17 +272,27 @@ def main():
         #driver = webdriver.Chrome(ChromeDriverManager().install())
         driver = webdriver.Chrome('C:/Users/fortgo01/chromedriver.exe')
 
+        if (server == "10.240.61.86" or server == "new"):
+            server = "10.240.61.86"
+            which_jenkins = "cloud_jenkins"
+        elif (server == "10.240.32.243" or server == "old"):
+            server = "10.240.32.243"
+            which_jenkins = "old_jenkins"
+        else:
+            print ("Unrecognized HPCC Jenkins Server: " + server)
+            sys.exit()
+            
         # go to the template for HPCC-7.x page
-        driver.get("http://10.240.32.243/view/HPCC-7.x/")
+        driver.get("http://" + server + "/view/HPCC-7.x/")
 
         print ("Setting up HPCC-" + full_version)
 
         search(driver, "HPCC-" + build_version)
-        isWorkflow(driver, build_version)
+        isWorkflow(driver, which_jenkins, build_version)
         setupBuilds(driver, build_version, full_version, build_series, search,
                     prev_platform_rc, prev_eclide_rc, prev_platform_gold, prev_eclide_gold, build_seq)
         setupECLIDE(driver, full_version, search)
-        createView(driver, full_version)
+        createView(driver, which_jenkins, full_version)
 
         print("Successful!")
         print("Hello HPCC-" + full_version)
