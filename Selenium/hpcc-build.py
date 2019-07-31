@@ -59,9 +59,9 @@ def isWorkflow(driver, which_jenkins, build_version):
         createItem.click()
         workflowName = driver.find_element_by_id("name")
         workflowName.send_keys("HPCC-" + build_version)
-        if (which_jenkins == "cloud_jenkins"):
+        if (which_jenkins == "new"):
             itemType = driver.find_element_by_xpath("//div[@id='j-add-item-type-uncategorized']/ul/li[2]/label")
-        elif (which_jenkins == "old_jenkins"):
+        elif (which_jenkins == "old"):
             itemType = driver.find_element_by_xpath("//div[@id='j-add-item-type-uncategorized']/ul/li[1]/label")
         itemType.click()
         createItem = driver.find_element_by_xpath("//button[@id='ok-button']")
@@ -154,7 +154,7 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
 
 # set up ECLIDE build
 def setupECLIDE(driver, full_version, search):
-    search(driver, "CE-Candidate-ECLIDE-Win32-" + full_version)
+    search(driver, "ECLIDE-W32-" + full_version)
 
     textElem = driver.find_element_by_link_text("Configure")
 
@@ -203,9 +203,9 @@ def createView(driver, which_jenkins, full_version):
 
     # scroll to the location of the radio button to click it
     driver.execute_script("window.scrollTo(23, 3325)")
-    if (which_jenkins == "cloud_jenkins"):
+    if (which_jenkins == "new"):
         listViewElem = driver.find_element_by_xpath("(//input[@name='mode'])[1]")
-    elif (which_jenkins == "old_jenkins"):
+    elif (which_jenkins == "old"):
         listViewElem = driver.find_element_by_xpath("(//input[@name='mode'])[2]")
     sleep(1)
     listViewElem.click()
@@ -236,7 +236,6 @@ def createView(driver, which_jenkins, full_version):
 def main():
     parser = OptionParser()
     parser.set_usage("Usage: hpcc-build.py -s <server ip> v <version> -p <prev_platform_rc_version> -q <prev_platform_gold_version> -i <prev_ide_rc_version> -j <prev_ide_gold_version>")
-    parser.add_option("-s", "--server-ip", type="string", dest="jenkins_ip", help="Examples: 10.240.61.86, new, old")
     parser.add_option("-v", "--version", type="string", dest="build_ver_seq",
                     help="Build versions are in the form of XX.XX.XX-X. Ex. 7.2.8-rc1")
     parser.add_option("-p", "--prev-platform-rc", type="string", dest="prev_platform_rc", 
@@ -249,7 +248,7 @@ def main():
                     help="Previous full eclide gold version from current release. Ex. 7.2.8-rc1")
     options, args = parser.parse_args()
 
-    server = options.jenkins_ip
+    server = ""
     full_version = options.build_ver_seq
     ver_seq = re.split("-",  full_version, 1)
     build_version = ver_seq[0]
@@ -272,14 +271,14 @@ def main():
         #driver = webdriver.Chrome(ChromeDriverManager().install())
         driver = webdriver.Chrome('C:/Users/fortgo01/chromedriver.exe')
 
-        if (server == "10.240.61.86" or server == "new"):
+        if (build_series == "7.4.x"):
             server = "10.240.61.86"
-            which_jenkins = "cloud_jenkins"
-        elif (server == "10.240.32.243" or server == "old"):
+            which_jenkins = "new"
+        elif (build_series == "7.2.x"):
             server = "10.240.32.243"
-            which_jenkins = "old_jenkins"
+            which_jenkins = "old"
         else:
-            print ("Unrecognized HPCC Jenkins Server: " + server)
+            print ("HPCC series " + build_series + " setup has not yet been implemented.")
             sys.exit()
             
         # go to the template for HPCC-7.x page
