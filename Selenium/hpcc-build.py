@@ -202,7 +202,7 @@ def createView(driver, which_jenkins, full_version):
     newViewName.send_keys("HPCC-" + full_version)
 
     # scroll to the location of the radio button to click it
-    driver.execute_script("window.scrollTo(23, 3325)")
+    driver.execute_script("window.scrollTo(23, 3425)")
     if (which_jenkins == "new"):
         listViewElem = driver.find_element_by_xpath("(//input[@name='mode'])[1]")
     elif (which_jenkins == "old"):
