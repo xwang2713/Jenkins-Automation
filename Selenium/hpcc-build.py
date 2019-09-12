@@ -89,6 +89,8 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
             template.select_by_value("HPCC-Template-All-7.0.x")
         elif (build_series == "7.2.x"):
             template.select_by_value("HPCC-Template-All-7.2.x")
+        elif (build_series == "7.4.x"):
+            template.select_by_value("HPCC-Template-All-7.4.x")
         else:
             template.select_by_value("HPCC-Template-All-7.x")
     elif (re.search("^\d*", build_series).group() == "6"):
@@ -270,20 +272,18 @@ def main():
         # Create a new instance (object) of the Chrome driver
         #driver = webdriver.Chrome(ChromeDriverManager().install())
         driver = webdriver.Chrome('C:/Users/fortgo01/chromedriver.exe')
+        #driver = webdriver.Firefox(executable_path=r'C:/Users/fortgo01/geckodriver.exe')
 
-        if (build_series == "7.4.x"):
-            server = "10.240.61.86"
-            which_jenkins = "new"
-        elif (build_series == "7.2.x"):
+        if (build_series == "7.2.x"):
             server = "10.240.32.243"
             which_jenkins = "old"
         else:
-            print ("HPCC series " + build_series + " setup has not yet been implemented.")
-            sys.exit()
+            server = "10.240.61.86"
+            which_jenkins = "new"
             
         # go to the template for HPCC-7.x page
         driver.get("http://" + server + "/view/HPCC-7.x/")
-
+        
         print ("Setting up HPCC-" + full_version)
 
         search(driver, "HPCC-" + build_version)
