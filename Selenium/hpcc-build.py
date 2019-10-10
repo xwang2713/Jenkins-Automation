@@ -150,6 +150,7 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
         else:
             workflowJob.send_keys(job_prefix + "-" + full_version)
 
+    sleep(3) #Wait for Jenkins to do validation
     #click to create build
     buttonElem = driver.find_element_by_xpath("//input[@value='Create']")
     buttonElem.click()
