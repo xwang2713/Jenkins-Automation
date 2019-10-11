@@ -155,7 +155,7 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
     buttonElem = driver.find_element_by_xpath("//input[@value='Create']")
     buttonElem.click()
 
-# set up ECLIDE build
+# ECLIDE build setup
 def setupECLIDE(driver, full_version, search):
     search(driver, "ECLIDE-W32-" + full_version)
 
@@ -189,6 +189,62 @@ def setupECLIDE(driver, full_version, search):
                 elem.send_keys("CTW32-" + full_version)
         else:
             print("Warning: Unrecognized artifact found. Please add artifact in line 145 of the source code.")
+
+    saveConfig = driver.find_element_by_xpath("//button[contains(.,'Save')]")
+    saveConfig.click()
+
+# CE-Candidate-Plugins-Spark setup
+def sparkPlugins(driver, full_version, search):
+    search(driver, "CE-Candidate-Plugins-Spark-" + full_version)
+
+    textElem = driver.find_element_by_link_text("Configure")
+
+    try:
+        textElem.click()
+    except Exception as e:
+        sleep(1)
+        textElem.click()
+
+    # important!
+    sleep(1)
+
+    # xpaths of artifacts' name input box
+    artifacts = driver.find_elements_by_xpath("//input[@name='_.filter']")
+
+    for artifact in artifacts:
+        if(artifact.get_attribute("value") == "**/*.jar"):
+            elem = driver.find_element_by_xpath("(//input[@name='_.projectName'])[3]")
+            elem.send_keys("Java-Projects-" + full_version)
+        else:
+            print("Warning: Unrecognized artifact found. Please add artifact in line 220 of the source code.")
+
+    saveConfig = driver.find_element_by_xpath("//button[contains(.,'Save')]")
+    saveConfig.click()
+
+# LN-Candidate-with-Plugins-Spark setup
+def lnWithPluginSpark(driver, full_version, search):
+    search(driver, "LN-Candidate-with-Plugins-Spark-" + full_version)
+
+    textElem = driver.find_element_by_link_text("Configure")
+
+    try:
+        textElem.click()
+    except Exception as e:
+        sleep(1)
+        textElem.click()
+
+    # important!
+    sleep(1)
+
+    # xpaths of artifacts' name input box
+    artifacts = driver.find_elements_by_xpath("//input[@name='_.filter']")
+
+    for artifact in artifacts:
+        if(artifact.get_attribute("value") == "**/*.jar"):
+            elem = driver.find_element_by_xpath("(//input[@name='_.projectName'])[3]")
+            elem.send_keys("Java-Projects-" + full_version)
+        else:
+            print("Warning: Unrecognized artifact found. Please add artifact in line 248 of the source code.")
 
     saveConfig = driver.find_element_by_xpath("//button[contains(.,'Save')]")
     saveConfig.click()
@@ -292,6 +348,8 @@ def main():
         setupBuilds(driver, build_version, full_version, build_series, search,
                     prev_platform_rc, prev_eclide_rc, prev_platform_gold, prev_eclide_gold, build_seq)
         setupECLIDE(driver, full_version, search)
+        sparkPlugins(driver, full_version, search)
+        lnWithPluginSpark(driver, full_version, search)
         createView(driver, which_jenkins, full_version)
 
         print("Successful!")
