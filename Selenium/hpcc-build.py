@@ -69,7 +69,7 @@ def isWorkflow(driver, which_jenkins, build_version):
 
 # setup all builds except ECLIDE
 def setupBuilds(driver, build_version, full_version, build_series, search,
-                prev_platform_rc, prev_eclide_rc, prev_platform_gold, prev_eclide_gold, build_seq):
+                prev_platform_rc, prev_eclide_rc, prev_platform_gold, prev_eclide_gold, build_seq, release_type):
     #search 
     search(driver, "HPCC-" + build_version)
 
@@ -90,9 +90,15 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
         elif (build_series == "7.2.x"):
             template.select_by_value("HPCC-Template-All-7.2.x")
         elif (build_series == "7.4.x"):
-            template.select_by_value("HPCC-Template-All-7.4.x")
+            if (release_type == "rc"):
+                template.select_by_value("HPCC-Template-All-RC-7.4.x")
+            else:
+                template.select_by_value("HPCC-Template-All-Gold-7.4.x")
         else:
-            template.select_by_value("HPCC-Template-All-7.x")
+            if (release_type == "rc"):
+                template.select_by_value("HPCC-Template-All-RC-7.x")
+            else:
+                template.select_by_value("HPCC-Template-All-Gold-7.x")
     elif (re.search("^\d*", build_series).group() == "6"):
         if (build_series == "6.4.x"):
             template.select_by_value("HPCC-Template-All-6.x")
@@ -338,6 +344,12 @@ def main():
             server = "10.240.61.86"
             which_jenkins = "new"
             
+        x = re.search("^rc[1-9]",build_seq)
+        if (x):
+            release_type = "rc"
+        else:
+            release_type = "gold"
+
         # go to the template for HPCC-7.x page
         driver.get("http://" + server + "/view/HPCC-7.x/")
         
@@ -346,7 +358,7 @@ def main():
         search(driver, "HPCC-" + build_version)
         isWorkflow(driver, which_jenkins, build_version)
         setupBuilds(driver, build_version, full_version, build_series, search,
-                    prev_platform_rc, prev_eclide_rc, prev_platform_gold, prev_eclide_gold, build_seq)
+                    prev_platform_rc, prev_eclide_rc, prev_platform_gold, prev_eclide_gold, build_seq, release_type)
         setupECLIDE(driver, full_version, search)
         sparkPlugins(driver, full_version, search)
         lnWithPluginSpark(driver, full_version, search)
