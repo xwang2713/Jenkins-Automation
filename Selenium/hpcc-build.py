@@ -94,6 +94,11 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
                 template.select_by_value("HPCC-Template-All-RC-7.4.x")
             else:
                 template.select_by_value("HPCC-Template-All-Gold-7.4.x")
+        elif (build_series == "7.6.x"):
+            if (release_type == "rc"):
+                template.select_by_value("HPCC-Template-All-RC-7.6.x")
+            else:
+                template.select_by_value("HPCC-Template-All-Gold-7.6.x")
         else:
             if (release_type == "rc"):
                 template.select_by_value("HPCC-Template-All-RC-7.x")
@@ -181,18 +186,23 @@ def setupECLIDE(driver, full_version, search):
 
     for artifact in artifacts:
         if(artifact.get_attribute("value") == "**/build-docs/docs/EN_US/HTMLHelp/html_help*.zip"):
-            elem = driver.find_element_by_xpath("(//input[@name='_.projectName'])[3]")
+            try:
+                elem = driver.find_element_by_xpath("(//input[@name='_.projectName'])[3]")
+            except Exception as e:
+                elem = driver.find_element_by_xpath("(//input[@name='_.projectName'])[4]")
             elem.send_keys("CE-Candidate-Docs-" + full_version)
         elif(artifact.get_attribute("value") == "**/build/GraphControl/bin/HPCCSystemsGraphViewControl/RelWithDebInfo/npHPCCSystemsGraphViewControl.*"):
-            elem = driver.find_element_by_xpath("(//input[@name='_.projectName'])[4]")
+            elem = driver.find_element_by_xpath("(//input[@name='_.projectName'])[5]")
             elem.send_keys("CE-Candidate-Graphcontrol-" + full_version)
         elif(artifact.get_attribute("value") == "**/build/hpccsystems-clienttools*.exe"):
             try:
-                elem = driver.find_element_by_xpath("(//input[@name='_.projectName'])[5]")
-                elem.send_keys("CTW32-" + full_version)
-            except Exception as e:
                 elem = driver.find_element_by_xpath("(//input[@name='_.projectName'])[4]")
-                elem.send_keys("CTW32-" + full_version)
+            except Exception as e:
+                try:
+                    elem = driver.find_element_by_xpath("(//input[@name='_.projectName'])[5]")
+                except Exception as e:
+                    elem = driver.find_element_by_xpath("(//input[@name='_.projectName'])[6]")
+            elem.send_keys("CTW32-" + full_version)
         else:
             print("Warning: Unrecognized artifact found. Please add artifact in line 145 of the source code.")
 
