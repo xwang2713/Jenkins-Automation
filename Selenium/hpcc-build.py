@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 #############################################
 #    HPCC SYSTEMS software Copyright (C) 2012 HPCC Systems®.
 #
@@ -17,7 +19,7 @@
 #############################################
 
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
+#from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait 
 from selenium.webdriver.support import expected_conditions as EC
@@ -32,6 +34,7 @@ import re, sys, os
 # search an item
 def search(driver, searchElem):
     sleep(1)
+    print("Searching for " + searchElem)
     # find the search box element by id
     searchBox = driver.find_element_by_id("search-box")
 
@@ -42,13 +45,14 @@ def search(driver, searchElem):
     searchBox.submit()
 
 # create a workflow if none exists
-def isWorkflow(driver, which_jenkins, build_version):
+def isWorkflow(driver, which_jenkins, build_version, search):
+    search(driver, "HPCC-" + build_version)
     try:
         # find element by text
         textElem = driver.find_element_by_link_text("Create Workflow")
         textElem.click()
     except Exception as e:
-        print('New Workflow needed', format(e))
+        print(('New Workflow needed', format(e)))
         
         #navigate to HPCC-7.x
         templateElem = driver.find_element_by_xpath("//ul[@id='breadcrumbs']/li[3]/a")
@@ -57,7 +61,9 @@ def isWorkflow(driver, which_jenkins, build_version):
         #create new item
         createItem = driver.find_element_by_xpath("(//a[contains(@href, '/view/HPCC-7.x/newJob')])[2]")
         createItem.click()
-        workflowName = driver.find_element_by_id("name")
+        sleep(5)
+        #workflowName = driver.find_element_by_id("name")
+        workflowName = driver.find_element_by_xpath("//input[@id='name']")
         workflowName.send_keys("HPCC-" + build_version)
         if (which_jenkins == "new"):
             itemType = driver.find_element_by_xpath("//div[@id='j-add-item-type-uncategorized']/ul/li[2]/label")
@@ -66,12 +72,15 @@ def isWorkflow(driver, which_jenkins, build_version):
         itemType.click()
         createItem = driver.find_element_by_xpath("//button[@id='ok-button']")
         createItem.click()
-
+        print("Done creating workflow for HPCC-" + build_version)
 # setup all builds except ECLIDE
 def setupBuilds(driver, build_version, full_version, build_series, search,
                 prev_platform_rc, prev_eclide_rc, prev_platform_gold, prev_eclide_gold, build_seq, release_type):
     #search 
     search(driver, "HPCC-" + build_version)
+
+    #get the major.minor.
+    major_minor = re.search("(\d*\.\d*\.*)", build_version).group()
 
     #create build
     textElem = driver.find_element_by_link_text("Create Workflow")
@@ -99,6 +108,16 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
                 template.select_by_value("HPCC-Template-All-RC-7.6.x")
             else:
                 template.select_by_value("HPCC-Template-All-Gold-7.6.x")
+        elif (build_series == "7.8.x"):
+            if (release_type == "rc"):
+                template.select_by_value("HPCC-Template-All-RC-7.8.x")
+            else:
+                template.select_by_value("HPCC-Template-All-Gold-7.8.x")
+        elif (build_series == "7.10.x"):
+            if (release_type == "rc"):
+                template.select_by_value("HPCC-Template-All-RC-7.10.x")
+            else:
+                template.select_by_value("HPCC-Template-All-Gold-7.10.x")
         else:
             if (release_type == "rc"):
                 template.select_by_value("HPCC-Template-All-RC-7.x")
@@ -108,14 +127,13 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
         if (build_series == "6.4.x"):
             template.select_by_value("HPCC-Template-All-6.x")
     else:
-        print("No template found for " + full_version)
+        print(("No template found for " + full_version))
 
 
     # important!
     # wait for elements to be loaded
-    """wait = WebDriverWait(driver, 10)
-    wait.until(EC.element_to_be_clickable((By.NAME, 'template.templateInstanceName')))"""
-    sleep(1)
+    WebDriverWait(driver, 30).until(EC.element_to_be_clickable((By.NAME, 'template.templateInstanceName')))
+    sleep(3)
 
     # select a workflow name
     workflowName = driver.find_element_by_name("template.templateInstanceName")
@@ -159,15 +177,44 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
         elif (job_prefix == 'SERIES'):
             workflowJob.send_keys(build_series)
         else:
-            workflowJob.send_keys(job_prefix + "-" + full_version)
+            job = job_prefix + "-" + full_version
+            workflowJob.send_keys(job)
+            print("Setting " + job + " " + "up")
+            
+            jobName = workflowJob.get_attribute("name")
 
-    sleep(3) #Wait for Jenkins to do validation
-    #click to create build
-    buttonElem = driver.find_element_by_xpath("//input[@value='Create']")
-    buttonElem.click()
+            try:
+                job_prefix = re.match("(.*)\.(.*)\-.", jobName).group(2)
+            except Exception as e:
+                job_prefix = re.match("(.*)\.(.*)", jobName).group(2)
+
+            validateElem = driver.find_element_by_id(job_prefix + '-' + major_minor + '.validation')
+            print(validateElem.text)
+            
+
+
+    
+    for i in range(2):
+        try:
+            buttonElem = driver.find_element_by_xpath("//input[@value='Create']")
+            # allowExistName = driver.find_element_by_id("allow_exist_name")
+            # allowExistName.click()
+            buttonElem.click()
+            # buttonElem.assertFalse(element.is_displayed())
+            print("ok button clicked for setting up builds")
+            sleep(3)
+            print("slept for 3 seconds")
+            break
+        except Exception as e:
+            print("Validation failed. Retry in 10s.")
+            sleep(10)
+    
+    WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.XPATH, "//a[contains(text(),'Create Workflow')]")))
+    print("Done setting builds up")
 
 # ECLIDE build setup
 def setupECLIDE(driver, full_version, search):
+    print("Configuring CE-Candidate-ECLIDE-" + full_version)
     search(driver, "ECLIDE-W32-" + full_version)
 
     textElem = driver.find_element_by_link_text("Configure")
@@ -208,9 +255,11 @@ def setupECLIDE(driver, full_version, search):
 
     saveConfig = driver.find_element_by_xpath("//button[contains(.,'Save')]")
     saveConfig.click()
+    print("CE-Candidate-ECLIDE-" + full_version + "configured")
 
 # CE-Candidate-Plugins-Spark setup
 def sparkPlugins(driver, full_version, search):
+    print("Configuring CE-Candidate-Plugins-Spark-" + full_version)
     search(driver, "CE-Candidate-Plugins-Spark-" + full_version)
 
     textElem = driver.find_element_by_link_text("Configure")
@@ -236,9 +285,11 @@ def sparkPlugins(driver, full_version, search):
 
     saveConfig = driver.find_element_by_xpath("//button[contains(.,'Save')]")
     saveConfig.click()
+    print("CE-Candidate-Plugins-Spark-" + full_version + " " "configured")
 
 # LN-Candidate-with-Plugins-Spark setup
 def lnWithPluginSpark(driver, full_version, search):
+    print("Configuring LN-Candidate-with-Plugins-Spark-" + full_version)
     search(driver, "LN-Candidate-with-Plugins-Spark-" + full_version)
 
     textElem = driver.find_element_by_link_text("Configure")
@@ -264,9 +315,11 @@ def lnWithPluginSpark(driver, full_version, search):
 
     saveConfig = driver.find_element_by_xpath("//button[contains(.,'Save')]")
     saveConfig.click()
+    print("LN-Candidate-with-Plugins-Spark-" + full_version + " " + "configured")
 
 # create new view
 def createView(driver, which_jenkins, full_version):
+    print("Creating a view for HPCC-" + full_version)
     allViewElem = driver.find_element_by_id("jenkins-name-icon")
     allViewElem.click()
 
@@ -277,40 +330,70 @@ def createView(driver, which_jenkins, full_version):
     newViewName.send_keys("HPCC-" + full_version)
 
     # scroll to the location of the radio button to click it
-    driver.execute_script("window.scrollTo(23, 3425)")
+    # driver.execute_script("window.scrollTo(23, 3425)")
     if (which_jenkins == "new"):
-        listViewElem = driver.find_element_by_xpath("(//input[@name='mode'])[1]")
+        listViewElem = driver.find_element_by_xpath("//div[@id='main-panel']/form/table/tbody/tr[3]/td/input")
     elif (which_jenkins == "old"):
         listViewElem = driver.find_element_by_xpath("(//input[@name='mode'])[2]")
-    sleep(1)
+    WebDriverWait(driver, 6).until(EC.element_to_be_clickable((By.XPATH, "//div[@id='main-panel']/form/table/tbody/tr[3]/td/input")))
     listViewElem.click()
 
     okButtonElem = driver.find_element_by_id("ok-button")
-    okButtonElem.click()
-
-    # execute a click event using JavaScript
-    driver.execute_script("document.getElementById('cb2').click();")
-    """wait = WebDriverWait(driver, 10)
-    wait.until(EC.element_to_be_clickable((By.NAME, 'includeRegex')))"""
-    sleep(1)
-
-    regxElem = driver.find_element_by_name("includeRegex")
-    sleep(1)
-    regxElem.send_keys(".*" + full_version)
-
-    okButtonElem = driver.find_element_by_xpath("//button[contains(.,'OK')]")
+    WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.ID, "ok-button")))
 
     try:
         okButtonElem.click()
     except Exception as e:
-        sleep(1)
-        okButtonElem.click()
+        print("A view with the name HPCC-" + full_version + " " + "might already exist.")
+         
+
+    # execute a click event using JavaScript
+    driver.execute_script("document.getElementById('cb2').click();")
+    WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.NAME, 'includeRegex')))
+
+    regxElem = driver.find_element_by_name("includeRegex")
+    regxElem.send_keys(".*" + full_version)
+
+    okButtonElem = driver.find_element_by_xpath("//button[contains(.,'OK')]")
+
+    WebDriverWait(driver, 30).until(EC.element_to_be_clickable((By.XPATH, "//button[contains(.,'OK')]")))
+    okButtonElem.click()
+    print("HPCC-" + full_version + " " + "view created")
+
+def runbuilds(driver, search, full_version, build_version):
+    #search 
+    search(driver, "HPCC-" + build_version)
+
+    wflow = driver.find_element_by_link_text("WF-HPCC-" + full_version)
+    wflow.click()
+
+    # get job names
+    sleep(5)
+    jobs = driver.find_elements_by_xpath("//div[@id='msg']/table/tbody/tr/td/a")
+    builds = []
+
+    for job in jobs:
+        builds.append (job.text)
+    
+    search(driver, 'HPCC-' + full_version)
+    
+    for build in builds:
+        try:
+            x = driver.find_element_by_xpath("//img[@alt='Schedule a Build for" + " " + build + "']")
+            if(build != "CE-Candidate-HyperV-64bit-" + full_version or build != "CE-Candidate-Plugins-Spark-" + full_version
+            or build != "ECLIDE-W32-" + full_version or build != "CE-Candidate-VM-64-bit-" + full_version or build != "LN-Candidate-with-Plugins-Spark-" + full_version):
+                x.click()
+        except Exception as e:
+            print(("The run button for" + " " + build + " " + "couldn't be found."))
+            print((build + " " + "might be disabled by default"))
+        
+
 
 
 # Main 
 def main():
     parser = OptionParser()
-    parser.set_usage("Usage: hpcc-build.py -s <server ip> v <version> -p <prev_platform_rc_version> -q <prev_platform_gold_version> -i <prev_ide_rc_version> -j <prev_ide_gold_version>")
+    parser.set_usage("Usage: hpcc-build.py -s <server ip> v <version> -p <prev_platform_rc_version> -q <prev_platform_gold_version> -i <prev_ide_rc_version> -j <prev_ide_gold_version> --run")
     parser.add_option("-v", "--version", type="string", dest="build_ver_seq",
                     help="Build versions are in the form of XX.XX.XX-X. Ex. 7.2.8-rc1")
     parser.add_option("-p", "--prev-platform-rc", type="string", dest="prev_platform_rc", 
@@ -319,8 +402,10 @@ def main():
                     help="Previous full platform gold version from current release. Ex. 7.2.8-1")
     parser.add_option("-i", "--prev-eclide-rc", type="string", dest="prev_eclide_rc", 
                     help="Previous full eclide rc version from current release. Ex. 7.2.8-rc1")
-    parser.add_option("-j", "--prev-eclide-gold", type="string", dest="prev_eclide_gold", 
+    parser.add_option("-j", "--prev-eclide-gold", type="string", dest="prev_eclide_gold",
                     help="Previous full eclide gold version from current release. Ex. 7.2.8-rc1")
+    parser.add_option("--run", action="store_true", default=True, dest="run",
+                    help="Run builds")
     options, args = parser.parse_args()
 
     server = ""
@@ -328,55 +413,53 @@ def main():
     ver_seq = re.split("-",  full_version, 1)
     build_version = ver_seq[0]
     build_seq =  ver_seq[1]
+    which_jenkins = ""
+
     prev_platform_rc = options.prev_platform_rc
     prev_platform_gold = options.prev_platform_gold
     prev_eclide_rc = options.prev_eclide_rc
     prev_eclide_gold = options.prev_eclide_gold
-    which_jenkins = ""
+
+    try:
+        build_series = re.search("(\d*\.\d*\.*)", build_version).group() + "x"
+    except Exception as e:
+        print(("Please enter a valid version or type " + os.path.basename(__file__) + " -h for help."))
+        sys.exit()
     
-    if len(args) != 1:
-        try:
-            build_series = re.search("(\d*\.\d*\.*)", build_version).group() + "x"
-        except Exception as e:
-            print ("Please enter a valid version or type " + os.path.basename(__file__) + " -h for help.")
-            sys.exit()
-        
-        # install webdriver: pip install webdriver-manager
-        # Create a new instance (object) of the Chrome driver
-        #driver = webdriver.Chrome(ChromeDriverManager().install())
-        driver = webdriver.Chrome('C:/Users/fortgo01/chromedriver.exe')
-        #driver = webdriver.Firefox(executable_path=r'C:/Users/fortgo01/geckodriver.exe')
+    # install webdriver: pip install webdriver-manager
+    # Create a new instance (object) of the Chrome driver
+    #driver = webdriver.Chrome(ChromeDriverManager().install())
+    driver = webdriver.Chrome('/usr/local/bin/chromedriver')
+    #driver = webdriver.Firefox(executable_path=r'C:/Users/fortgo01/geckodriver.exe')
 
-        if (build_series == "7.2.x"):
-            server = "10.240.32.243"
-            which_jenkins = "old"
-        else:
-            server = "10.240.61.86"
-            which_jenkins = "new"
-            
-        x = re.search("^rc[1-9]",build_seq)
-        if (x):
-            release_type = "rc"
-        else:
-            release_type = "gold"
-
-        # go to the template for HPCC-7.x page
-        driver.get("http://" + server + "/view/HPCC-7.x/")
-        
-        print ("Setting up HPCC-" + full_version)
-
-        search(driver, "HPCC-" + build_version)
-        isWorkflow(driver, which_jenkins, build_version)
-        setupBuilds(driver, build_version, full_version, build_series, search,
-                    prev_platform_rc, prev_eclide_rc, prev_platform_gold, prev_eclide_gold, build_seq, release_type)
-        setupECLIDE(driver, full_version, search)
-        sparkPlugins(driver, full_version, search)
-        lnWithPluginSpark(driver, full_version, search)
-        createView(driver, which_jenkins, full_version)
-
-        print("Successful!")
-        print("Hello HPCC-" + full_version)
+    if (build_series == "7.2.x"):
+        server = "10.240.32.243"
+        which_jenkins = "old"
     else:
-        parser.error("Missing required argument(s)")
+        server = "10.240.61.86"
+        which_jenkins = "new"
+        
+    x = re.search("^rc[1-9]",build_seq)
+    if (x):
+        release_type = "rc"
+    else:
+        release_type = "gold"
+
+    # go to the template for HPCC-7.x page
+    driver.get("http://" + server + "/view/HPCC-7.x/")
+    
+    print(("Setting up HPCC-" + full_version))
+
+    isWorkflow(driver, which_jenkins, build_version, search)
+    setupBuilds(driver, build_version, full_version, build_series, search,
+            prev_platform_rc, prev_eclide_rc, prev_platform_gold, prev_eclide_gold, build_seq, release_type)
+    setupECLIDE(driver, full_version, search)
+    sparkPlugins(driver, full_version, search)
+    lnWithPluginSpark(driver, full_version, search)
+    createView(driver, which_jenkins, full_version)
+    # runbuilds(driver, search, full_version, build_version)
+    print("Successful!")
+    print(("Hello HPCC-" + full_version))
+
 if __name__=="__main__":
     main()
