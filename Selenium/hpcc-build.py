@@ -19,6 +19,11 @@
 #############################################
 
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+chromeOptions = Options()
+chromeOptions.add_argument('--headless')
+chromeOptions.add_argument('--disable-gpu')
+chromeOptions.add_argument('--remote-debugging-port=9222')
 #from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait 
@@ -75,7 +80,7 @@ def isWorkflow(driver, which_jenkins, build_version, search):
         print("Done creating workflow for HPCC-" + build_version)
 # setup all builds except ECLIDE
 def setupBuilds(driver, build_version, full_version, build_series, search,
-                prev_platform_rc, prev_eclide_rc, prev_platform_gold, prev_eclide_gold, build_seq, release_type):
+                prev_platform_rc, prev_platform_gold, build_seq, release_type):
     #search 
     search(driver, "HPCC-" + build_version)
 
@@ -157,11 +162,11 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
         elif(job_prefix == 'PREV_CE_PLATFORM_RC'):
             workflowJob.send_keys(prev_platform_rc)
         elif(job_prefix == 'PREV_ECLIDE_RC'):
-            workflowJob.send_keys(prev_eclide_rc)
+            workflowJob.send_keys(prev_platform_rc)
         elif(job_prefix == 'PREV_CE_PLATFORM_GOLD'):
             workflowJob.send_keys(prev_platform_gold)
         elif(job_prefix == 'PREV_ECLIDE_GOLD'):
-            workflowJob.send_keys(prev_eclide_gold)
+            workflowJob.send_keys(prev_platform_gold)
         elif (job_prefix == 'GANGLIA_MONITORING_VER_SEQ'):
             workflowJob.send_keys(full_version)
         elif (job_prefix == 'CE_PLATFORM_VER_SEQ'):
@@ -188,7 +193,9 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
             except Exception as e:
                 job_prefix = re.match("(.*)\.(.*)", jobName).group(2)
 
-            validateElem = driver.find_element_by_id(job_prefix + '-' + major_minor + '.validation')
+            job_id = job_prefix + '-' + major_minor + '.validation'
+            
+            validateElem = driver.find_element_by_id(job_id)
             print(validateElem.text)
             
 
@@ -201,13 +208,14 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
             # allowExistName.click()
             buttonElem.click()
             # buttonElem.assertFalse(element.is_displayed())
-            print("ok button clicked for setting up builds")
+            print("ok button clicked for setting up builds" + i + "time(s)")
             sleep(3)
-            print("slept for 3 seconds")
+            print("slept for 3 seconds to catch potential exceptions")
             break
         except Exception as e:
-            print("Validation failed. Retry in 10s.")
-            sleep(10)
+            sleep(3)
+            print("Validation failed. Retry in 20s.")
+            sleep(20)
     
     WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.XPATH, "//a[contains(text(),'Create Workflow')]")))
     print("Done setting builds up")
@@ -393,17 +401,13 @@ def runbuilds(driver, search, full_version, build_version):
 # Main 
 def main():
     parser = OptionParser()
-    parser.set_usage("Usage: hpcc-build.py -s <server ip> v <version> -p <prev_platform_rc_version> -q <prev_platform_gold_version> -i <prev_ide_rc_version> -j <prev_ide_gold_version> --run")
+    parser.set_usage("Usage: hpcc-build.py -s <server ip> v <version> -r <prev_platform_rc_version> -g <prev_platform_gold_version> --run")
     parser.add_option("-v", "--version", type="string", dest="build_ver_seq",
                     help="Build versions are in the form of XX.XX.XX-X. Ex. 7.2.8-rc1")
-    parser.add_option("-p", "--prev-platform-rc", type="string", dest="prev_platform_rc", 
+    parser.add_option("-r", "--prev-platform-rc", type="string", dest="prev_platform_rc", 
                     help="Previous full platform rc version from current release. Ex. 7.2.8-rc1")
-    parser.add_option("-q", "--prev-platform-gold", type="string", dest="prev_platform_gold", 
+    parser.add_option("-g", "--prev-platform-gold", type="string", dest="prev_platform_gold", 
                     help="Previous full platform gold version from current release. Ex. 7.2.8-1")
-    parser.add_option("-i", "--prev-eclide-rc", type="string", dest="prev_eclide_rc", 
-                    help="Previous full eclide rc version from current release. Ex. 7.2.8-rc1")
-    parser.add_option("-j", "--prev-eclide-gold", type="string", dest="prev_eclide_gold",
-                    help="Previous full eclide gold version from current release. Ex. 7.2.8-rc1")
     parser.add_option("--run", action="store_true", default=True, dest="run",
                     help="Run builds")
     options, args = parser.parse_args()
@@ -417,8 +421,7 @@ def main():
 
     prev_platform_rc = options.prev_platform_rc
     prev_platform_gold = options.prev_platform_gold
-    prev_eclide_rc = options.prev_eclide_rc
-    prev_eclide_gold = options.prev_eclide_gold
+   
 
     try:
         build_series = re.search("(\d*\.\d*\.*)", build_version).group() + "x"
@@ -428,8 +431,9 @@ def main():
     
     # install webdriver: pip install webdriver-manager
     # Create a new instance (object) of the Chrome driver
-    #driver = webdriver.Chrome(ChromeDriverManager().install())
-    driver = webdriver.Chrome('/usr/local/bin/chromedriver')
+    # driver = webdriver.Chrome(ChromeDriverManager().install())
+    # driver = webdriver.Chrome('/usr/local/bin/chromedriver')
+    driver = webdriver.Chrome(executable_path="/usr/local/bin/chromedriver", options=chromeOptions)
     #driver = webdriver.Firefox(executable_path=r'C:/Users/fortgo01/geckodriver.exe')
 
     if (build_series == "7.2.x"):
@@ -446,20 +450,20 @@ def main():
         release_type = "gold"
 
     # go to the template for HPCC-7.x page
-    driver.get("http://" + server + "/view/HPCC-7.x/")
+    url = "http://" + server + "/view/HPCC-7.x/"
+    driver.get(url)
     
     print(("Setting up HPCC-" + full_version))
 
     isWorkflow(driver, which_jenkins, build_version, search)
     setupBuilds(driver, build_version, full_version, build_series, search,
-            prev_platform_rc, prev_eclide_rc, prev_platform_gold, prev_eclide_gold, build_seq, release_type)
+            prev_platform_rc, prev_platform_gold, build_seq, release_type)
     setupECLIDE(driver, full_version, search)
     sparkPlugins(driver, full_version, search)
     lnWithPluginSpark(driver, full_version, search)
     createView(driver, which_jenkins, full_version)
     # runbuilds(driver, search, full_version, build_version)
-    print("Successful!")
-    print(("Hello HPCC-" + full_version))
-
+    print("Yay, HPCC-" + full_version + " has been set up!")
+    print("Freezing all motor functions")
 if __name__=="__main__":
     main()
