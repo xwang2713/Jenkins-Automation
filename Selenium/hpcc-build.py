@@ -39,7 +39,7 @@ import re, sys, os
 # search an item
 def search(driver, searchElem):
     sleep(1)
-    print("Searching for " + searchElem)
+    print("Search: " + searchElem)
     # find the search box element by id
     searchBox = driver.find_element_by_id("search-box")
 
@@ -56,8 +56,9 @@ def isWorkflow(driver, which_jenkins, build_version, search):
         # find element by text
         textElem = driver.find_element_by_link_text("Create Workflow")
         textElem.click()
+        print("New workflow needed: No")
     except Exception as e:
-        print(('New Workflow needed', format(e)))
+        print('New Workflow needed: Yes', format(e))
         
         #navigate to HPCC-7.x
         templateElem = driver.find_element_by_xpath("//ul[@id='breadcrumbs']/li[3]/a")
@@ -77,12 +78,15 @@ def isWorkflow(driver, which_jenkins, build_version, search):
         itemType.click()
         createItem = driver.find_element_by_xpath("//button[@id='ok-button']")
         createItem.click()
-        print("Done creating workflow for HPCC-" + build_version)
+        print("New workflow created: HPCC-" + build_version)
+
 # setup all builds except ECLIDE
 def setupBuilds(driver, build_version, full_version, build_series, search,
                 prev_platform_rc, prev_platform_gold, build_seq, release_type):
     #search 
     search(driver, "HPCC-" + build_version)
+
+    print("Setting up: HPCC-" + full_version + " jobs")
 
     #get the major.minor.
     major_minor = re.search("(\d*\.\d*\.*)", build_version).group()
@@ -100,29 +104,41 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
 
     if (re.search("^\d*", build_series).group() == "7"):
         if (build_series == "7.0.x"):
+            print(full_version + " template found: Template-7.0.x ")
             template.select_by_value("HPCC-Template-All-7.0.x")
         elif (build_series == "7.2.x"):
+            print(full_version + " template found: Template-7.2.x ")
             template.select_by_value("HPCC-Template-All-7.2.x")
         elif (build_series == "7.4.x"):
+            print(full_version + " template found: Template-7.4.x ")
             if (release_type == "rc"):
                 template.select_by_value("HPCC-Template-All-RC-7.4.x")
             else:
                 template.select_by_value("HPCC-Template-All-Gold-7.4.x")
         elif (build_series == "7.6.x"):
+            print(full_version + " template found: Template-7.6.x ")
             if (release_type == "rc"):
                 template.select_by_value("HPCC-Template-All-RC-7.6.x")
             else:
                 template.select_by_value("HPCC-Template-All-Gold-7.6.x")
         elif (build_series == "7.8.x"):
+            print(full_version + " template found: Template-7.8.x ")
             if (release_type == "rc"):
                 template.select_by_value("HPCC-Template-All-RC-7.8.x")
             else:
                 template.select_by_value("HPCC-Template-All-Gold-7.8.x")
         elif (build_series == "7.10.x"):
+            print(full_version + " template found: Template-7.10.x ")
             if (release_type == "rc"):
                 template.select_by_value("HPCC-Template-All-RC-7.10.x")
             else:
                 template.select_by_value("HPCC-Template-All-Gold-7.10.x")
+        elif (build_series == "7.12.x"):
+            print(full_version + " template found: Template-7.12.x ")
+            if (release_type == "rc"):
+                template.select_by_value("HPCC-Template-All-RC-7.12.x")
+            else:
+                template.select_by_value("HPCC-Template-All-Gold-7.12.x")
         else:
             if (release_type == "rc"):
                 template.select_by_value("HPCC-Template-All-RC-7.x")
@@ -132,7 +148,7 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
         if (build_series == "6.4.x"):
             template.select_by_value("HPCC-Template-All-6.x")
     else:
-        print(("No template found for " + full_version))
+        print(full_version + " template found: None ")
 
 
     # important!
@@ -157,34 +173,46 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
 
         if (job_prefix == 'EE_PLATFORM_VER_SEQ'):
             workflowJob.send_keys(full_version)
+            print("EE_PLATFORM_VER_SEQ: " + full_version)
         elif(job_prefix == 'CE_PLATFORM_SEQ'):
             workflowJob.send_keys(build_seq)
+            print("CE_PLATFORM_SEQ: " + build_seq)
         elif(job_prefix == 'PREV_CE_PLATFORM_RC'):
             workflowJob.send_keys(prev_platform_rc)
+            print("PREV_CE_PLATFORM_RC: " + prev_platform_rc)
         elif(job_prefix == 'PREV_ECLIDE_RC'):
             workflowJob.send_keys(prev_platform_rc)
+            print("PREV_ECLIDE_RC: " + prev_platform_rc)
         elif(job_prefix == 'PREV_CE_PLATFORM_GOLD'):
             workflowJob.send_keys(prev_platform_gold)
+            print("PREV_CE_PLATFORM_GOLD: " + prev_platform_gold)
         elif(job_prefix == 'PREV_ECLIDE_GOLD'):
             workflowJob.send_keys(prev_platform_gold)
+            print("PREV_ECLIDE_GOLD: " + prev_platform_gold)
         elif (job_prefix == 'GANGLIA_MONITORING_VER_SEQ'):
             workflowJob.send_keys(full_version)
         elif (job_prefix == 'CE_PLATFORM_VER_SEQ'):
             workflowJob.send_keys(full_version)
+            print("CE_PLATFORM_VER_SEQ: " + full_version)
         elif (job_prefix == 'NAGIOS_MONITORING_VER_SEQ'):
             workflowJob.send_keys(full_version)
+            print("NAGIOS_MONITORING_VER_SEQ: " + full_version)
         elif (job_prefix == 'GRAPH_CONTROL_VER_SEQ'):
             workflowJob.send_keys(full_version)
+            print("GRAPH_CONTROL_VER_SEQ: " + full_version)
         elif (job_prefix == 'WSSQL_VER_SEQ'):
             workflowJob.send_keys(full_version)
+            print("WSSQL_VER_SEQ: " + full_version)
         elif (job_prefix == 'VERSION'):
             workflowJob.send_keys(build_version)
+            print("VERSION: " + build_version)
         elif (job_prefix == 'SERIES'):
             workflowJob.send_keys(build_series)
+            print("SERIES: " + build_series)
         else:
             job = job_prefix + "-" + full_version
             workflowJob.send_keys(job)
-            print("Setting " + job + " " + "up")
+            print("Build name: " + job)
             
             jobName = workflowJob.get_attribute("name")
 
@@ -196,7 +224,12 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
             job_id = job_prefix + '-' + major_minor + '.validation'
             
             validateElem = driver.find_element_by_id(job_id)
-            print(validateElem.text)
+            if (validateElem.text == 'valid name'):
+                print("Valid name: Yes")
+            elif (validateElem.text == 'invalid name'):
+                print("Valid name: No")
+            else:
+                print("Valid name: Unknown")
             
 
 
@@ -214,15 +247,16 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
             break
         except Exception as e:
             sleep(3)
-            print("Validation failed. Retry in 20s.")
+            print("Build name validation failed.")
+            print("Build names will be validated again in 20 seconds.")
             sleep(20)
     
     WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.XPATH, "//a[contains(text(),'Create Workflow')]")))
-    print("Done setting builds up")
+    print("Build list set: Yes")
 
 # ECLIDE build setup
 def setupECLIDE(driver, full_version, search):
-    print("Configuring CE-Candidate-ECLIDE-" + full_version)
+    print("Build name: CE-Candidate-ECLIDE-" + full_version)
     search(driver, "ECLIDE-W32-" + full_version)
 
     textElem = driver.find_element_by_link_text("Configure")
@@ -263,11 +297,11 @@ def setupECLIDE(driver, full_version, search):
 
     saveConfig = driver.find_element_by_xpath("//button[contains(.,'Save')]")
     saveConfig.click()
-    print("CE-Candidate-ECLIDE-" + full_version + "configured")
+    print("Configured: Yes")
 
 # CE-Candidate-Plugins-Spark setup
 def sparkPlugins(driver, full_version, search):
-    print("Configuring CE-Candidate-Plugins-Spark-" + full_version)
+    print("Build name: CE-Candidate-Plugins-Spark-" + full_version)
     search(driver, "CE-Candidate-Plugins-Spark-" + full_version)
 
     textElem = driver.find_element_by_link_text("Configure")
@@ -293,11 +327,11 @@ def sparkPlugins(driver, full_version, search):
 
     saveConfig = driver.find_element_by_xpath("//button[contains(.,'Save')]")
     saveConfig.click()
-    print("CE-Candidate-Plugins-Spark-" + full_version + " " "configured")
+    print("Configured: Yes")
 
 # LN-Candidate-with-Plugins-Spark setup
 def lnWithPluginSpark(driver, full_version, search):
-    print("Configuring LN-Candidate-with-Plugins-Spark-" + full_version)
+    print("Build name: LN-Candidate-with-Plugins-Spark-" + full_version)
     search(driver, "LN-Candidate-with-Plugins-Spark-" + full_version)
 
     textElem = driver.find_element_by_link_text("Configure")
@@ -323,11 +357,11 @@ def lnWithPluginSpark(driver, full_version, search):
 
     saveConfig = driver.find_element_by_xpath("//button[contains(.,'Save')]")
     saveConfig.click()
-    print("LN-Candidate-with-Plugins-Spark-" + full_version + " " + "configured")
+    print("Configured: Yes")
 
 # create new view
 def createView(driver, which_jenkins, full_version):
-    print("Creating a view for HPCC-" + full_version)
+    print("Creating view: HPCC-" + full_version)
     allViewElem = driver.find_element_by_id("jenkins-name-icon")
     allViewElem.click()
 
@@ -366,7 +400,7 @@ def createView(driver, which_jenkins, full_version):
 
     WebDriverWait(driver, 30).until(EC.element_to_be_clickable((By.XPATH, "//button[contains(.,'OK')]")))
     okButtonElem.click()
-    print("HPCC-" + full_version + " " + "view created")
+    print("View created: Yes")
 
 def runbuilds(driver, search, full_version, build_version):
     #search 
@@ -455,15 +489,21 @@ def main():
     
     print(("Setting up HPCC-" + full_version))
 
+    print("----------------------------------")
     isWorkflow(driver, which_jenkins, build_version, search)
+    print("----------------------------------")
     setupBuilds(driver, build_version, full_version, build_series, search,
             prev_platform_rc, prev_platform_gold, build_seq, release_type)
+    print("----------------------------------")
     setupECLIDE(driver, full_version, search)
+    print("----------------------------------")
     sparkPlugins(driver, full_version, search)
+    print("----------------------------------")
     lnWithPluginSpark(driver, full_version, search)
+    print("----------------------------------")
     createView(driver, which_jenkins, full_version)
+    print("----------------------------------")
     # runbuilds(driver, search, full_version, build_version)
-    print("Yay, HPCC-" + full_version + " has been set up!")
-    print("Freezing all motor functions")
+    print("Configurations: Done")
 if __name__=="__main__":
     main()
