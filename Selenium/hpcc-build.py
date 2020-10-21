@@ -472,8 +472,8 @@ def main():
     # install webdriver: pip install webdriver-manager
     # Create a new instance (object) of the Chrome driver
     # driver = webdriver.Chrome(ChromeDriverManager().install())
-    driver = webdriver.Chrome('/usr/local/bin/chromedriver')
-    # driver = webdriver.Chrome(executable_path="/usr/local/bin/chromedriver", options=chromeOptions)
+    # driver = webdriver.Chrome('/usr/local/bin/chromedriver')
+    driver = webdriver.Chrome(executable_path="/usr/local/bin/chromedriver", options=chromeOptions)
     #driver = webdriver.Firefox(executable_path=r'C:/Users/fortgo01/geckodriver.exe')
 
     if (build_series == "7.2.x"):
