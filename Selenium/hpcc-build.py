@@ -274,7 +274,13 @@ def setupECLIDE(driver, full_version, search):
     artifacts = driver.find_elements_by_xpath("//input[@name='_.filter']")
 
     for artifact in artifacts:
-        if(artifact.get_attribute("value") == "**/build-docs/docs/EN_US/HTMLHelp/html_help*.zip"):
+        if(artifact.get_attribute("value") == "**/build-docs/docs/EN_US/HTMLHelp/html_help*.zip"): # English docs
+            try:
+                elem = driver.find_element_by_xpath("(//input[@name='_.projectName'])[3]")
+            except Exception as e:
+                elem = driver.find_element_by_xpath("(//input[@name='_.projectName'])[4]")
+            elem.send_keys("CE-Candidate-Docs-" + full_version)
+        elif(artifact.get_attribute("value") == "**/build-docs/docs/EN_US/HTMLHelp/html_help*.zip,**/build-docs/docs/PT_BR/HTMLHelp/html_help*.zip"): # English and Portuguese docs
             try:
                 elem = driver.find_element_by_xpath("(//input[@name='_.projectName'])[3]")
             except Exception as e:
@@ -466,8 +472,8 @@ def main():
     # install webdriver: pip install webdriver-manager
     # Create a new instance (object) of the Chrome driver
     # driver = webdriver.Chrome(ChromeDriverManager().install())
-    # driver = webdriver.Chrome('/usr/local/bin/chromedriver')
-    driver = webdriver.Chrome(executable_path="/usr/local/bin/chromedriver", options=chromeOptions)
+    driver = webdriver.Chrome('/usr/local/bin/chromedriver')
+    # driver = webdriver.Chrome(executable_path="/usr/local/bin/chromedriver", options=chromeOptions)
     #driver = webdriver.Firefox(executable_path=r'C:/Users/fortgo01/geckodriver.exe')
 
     if (build_series == "7.2.x"):
