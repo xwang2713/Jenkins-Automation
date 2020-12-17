@@ -65,7 +65,7 @@ def isWorkflow(driver, which_jenkins, build_version, search):
         templateElem.click()
 
         #create new item
-        createItem = driver.find_element_by_xpath("(//a[contains(@href, '/view/HPCC-7.x/newJob')])[2]")
+        createItem = driver.find_element_by_xpath("//div[@id='tasks']/div/span/a/span[2]")
         createItem.click()
         sleep(5)
         #workflowName = driver.find_element_by_id("name")
@@ -234,7 +234,7 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
 
 
     
-    for i in range(2):
+    for i in range(3):
         try:
             buttonElem = driver.find_element_by_xpath("//input[@value='Create']")
             # allowExistName = driver.find_element_by_id("allow_exist_name")
@@ -251,7 +251,7 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
             print("Build names will be validated again in 20 seconds.")
             sleep(20)
     
-    WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.XPATH, "//a[contains(text(),'Create Workflow')]")))
+    WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.XPATH, "//div[@id='tasks']/div[3]/span/a/span[2]")))
     print("Build list set: Yes")
 
 # ECLIDE build setup
@@ -371,7 +371,7 @@ def createView(driver, which_jenkins, full_version):
     allViewElem = driver.find_element_by_id("jenkins-name-icon")
     allViewElem.click()
 
-    newViewElem = driver.find_element_by_xpath("//a[contains(text(),'+')]")
+    newViewElem = driver.find_element_by_xpath("(//a[contains(@href, '/newView')])[2]")
     newViewElem.click()
 
     newViewName = driver.find_element_by_id("name")
