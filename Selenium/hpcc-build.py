@@ -440,9 +440,6 @@ def runBuilds(driver, search, full_version, build_version):
         except Exception as e:
             print(("The run button for" + " " + build + " " + "couldn't be found."))
             print((build + " " + "might be disabled by default"))
-        
-
-def createTemplate():
 
 
 # Main 
