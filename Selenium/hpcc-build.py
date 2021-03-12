@@ -139,6 +139,12 @@ def setupBuilds(driver, build_version, full_version, build_series, search,
                 template.select_by_value("HPCC-Template-All-RC-7.12.x")
             else:
                 template.select_by_value("HPCC-Template-All-Gold-7.12.x")
+        elif (build_series == "8.0.x"):
+            print(full_version + " template found: Template-8.0.x ")
+            if (release_type == "rc"):
+                template.select_by_value("HPCC-Template-All-RC-8.0.x")
+            else:
+                template.select_by_value("HPCC-Template-All-Gold-8.0.x")
         else:
             if (release_type == "rc"):
                 template.select_by_value("HPCC-Template-All-RC-7.x")
@@ -408,7 +414,7 @@ def createView(driver, which_jenkins, full_version):
     okButtonElem.click()
     print("View created: Yes")
 
-def runbuilds(driver, search, full_version, build_version):
+def runBuilds(driver, search, full_version, build_version):
     #search 
     search(driver, "HPCC-" + build_version)
 
@@ -436,6 +442,7 @@ def runbuilds(driver, search, full_version, build_version):
             print((build + " " + "might be disabled by default"))
         
 
+def createTemplate():
 
 
 # Main 
@@ -509,7 +516,7 @@ def main():
     print("----------------------------------")
     createView(driver, which_jenkins, full_version)
     print("----------------------------------")
-    # runbuilds(driver, search, full_version, build_version)
+    # runBuilds(driver, search, full_version, build_version)
     print("Configurations: Done")
 if __name__=="__main__":
     main()
