@@ -65,7 +65,7 @@ def isWorkflow(driver, which_jenkins, build_version, search):
         templateElem.click()
 
         #create new item
-        createItem = driver.find_element_by_xpath("//div[@id='tasks']/div/span/a/span[2]")
+        createItem = driver.find_element_by_xpath("//div[@id='tasks']/div[3]/span/a/span[2]")
         createItem.click()
         sleep(5)
         #workflowName = driver.find_element_by_id("name")
