@@ -504,6 +504,8 @@ def main():
                     help="Run builds")
     parser.add_option("--run", action="store_true", default=False, dest="run",
                     help="Run builds")
+    parser.add_option("--headless", action="store_true", default=False, dest="headless",
+                    help="Run builds")
     options, args = parser.parse_args()
 
     server = ""
@@ -517,6 +519,7 @@ def main():
     prev_platform_gold = options.prev_platform_gold
     set_builds = options.set
     trigger_builds = options.run
+    headless_chrome = options.headless
    
 
     try:
@@ -530,8 +533,11 @@ def main():
     # install webdriver: pip install webdriver-manager
     # Create a new instance (object) of the Chrome driver
     # driver = webdriver.Chrome(ChromeDriverManager().install())
-    driver = webdriver.Chrome('/usr/local/bin/chromedriver')
-    # driver = webdriver.Chrome(executable_path="/usr/local/bin/chromedriver", options=chromeOptions)
+    if (headless_chrome == True):
+        driver = webdriver.Chrome(executable_path="/usr/local/bin/chromedriver", options=chromeOptions)
+    else:
+        driver = webdriver.Chrome('/usr/local/bin/chromedriver')
+
     #driver = webdriver.Firefox(executable_path=r'C:/Users/fortgo01/geckodriver.exe')
 
     if (template_series == "7.2.x"):
