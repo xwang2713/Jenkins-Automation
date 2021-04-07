@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 #############################################
@@ -33,6 +33,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from time import sleep
 from optparse import OptionParser
+from beautifultable import BeautifulTable
 import re, sys, os
 
 
@@ -263,20 +264,20 @@ def setupBuilds(driver, build_version, full_version, template_series, version_se
             
 
 
-    
-    for i in range(4):
+    a = True
+    while a == True:
         try:
             buttonElem = driver.find_element_by_xpath("//input[@value='Create']")
             # allowExistName = driver.find_element_by_id("allow_exist_name")
             # allowExistName.click()
             buttonElem.click()
             # buttonElem.assertFalse(element.is_displayed())
-            print("ok button clicked for setting up builds" + i + "time(s)")
-            sleep(3)
-            print("slept for 3 seconds to catch potential exceptions")
-            break
+            print("a=" + a)
         except Exception as e:
-            sleep(3)
+            try:
+                driver.find_element_by_xpath("//input[@value='Create']")
+            except Exception as e:
+                break
             print("Build name validation failed.")
             print("Build names will be validated again in 5 seconds.")
             sleep(5)
@@ -439,6 +440,7 @@ def createView(driver, which_jenkins, full_version):
     print("View created: Yes")
 
 def runBuilds(driver, search, full_version, build_version):
+
     #search 
     search(driver, dashboard, "HPCC-" + build_version)
 
@@ -454,16 +456,38 @@ def runBuilds(driver, search, full_version, build_version):
         builds.append (job.text)
     
     search(driver, dashboard, 'HPCC-' + full_version)
-    
+
+    # Table vars 
+    h0 = ["Name"]
+    h0.append("Type")
+    h0.append("Status")
+    r = ['a','b','c']
+    table = BeautifulTable()
+    table.columns.header = h0
+  
     for build in builds:
         try:
             x = driver.find_element_by_xpath("//img[@alt='Schedule a Build for" + " " + build + "']")
-            if(build != "CE-Candidate-HyperV-64bit-" + full_version or build != "CE-Candidate-Plugins-Spark-" + full_version
-            or build != "ECLIDE-W32-" + full_version or build != "CE-Candidate-VM-64-bit-" + full_version or build != "LN-Candidate-with-Plugins-Spark-" + full_version):
+
+            if (build != "CE-Candidate-HyperV-64bit-" + full_version and build != "CE-Candidate-Plugins-Spark-" + full_version
+            and build != "ECLIDE-W32-" + full_version and build != "CE-Candidate-VM-64bit-" + full_version 
+            and build != "Java-Projects-Maven-Central-Release-" + full_version and build != "LN-Candidate-with-Plugins-Spark-" + full_version 
+            and build != "Regression-" + full_version):
                 x.click()
+                r[0] = build
+                r[1] = '-'
+                r[2] = 'Running'
+                table.rows.append(r)
+            else:
+                r[0] = build
+                r[1] = 'Downstream'
+                r[2] = 'Will be triggered by another build'
+                table.rows.append(r)
         except Exception as e:
             print(("The run button for" + " " + build + " " + "couldn't be found."))
             print((build + " " + "might be disabled by default"))
+
+    print(table)
 
 
 # Main 
@@ -476,7 +500,9 @@ def main():
                     help="Previous full platform rc version from current release. Ex. 7.2.8-rc1")
     parser.add_option("-g", "--prev-platform-gold", type="string", dest="prev_platform_gold", 
                     help="Previous full platform gold version from current release. Ex. 7.2.8-1")
-    parser.add_option("--run", action="store_true", default=True, dest="run",
+    parser.add_option("--set", action="store_true", default=False, dest="set",
+                    help="Run builds")
+    parser.add_option("--run", action="store_true", default=False, dest="run",
                     help="Run builds")
     options, args = parser.parse_args()
 
@@ -489,6 +515,8 @@ def main():
 
     prev_platform_rc = options.prev_platform_rc
     prev_platform_gold = options.prev_platform_gold
+    set_builds = options.set
+    trigger_builds = options.run
    
 
     try:
@@ -502,8 +530,8 @@ def main():
     # install webdriver: pip install webdriver-manager
     # Create a new instance (object) of the Chrome driver
     # driver = webdriver.Chrome(ChromeDriverManager().install())
-    # driver = webdriver.Chrome('/usr/local/bin/chromedriver')
-    driver = webdriver.Chrome(executable_path="/usr/local/bin/chromedriver", options=chromeOptions)
+    driver = webdriver.Chrome('/usr/local/bin/chromedriver')
+    # driver = webdriver.Chrome(executable_path="/usr/local/bin/chromedriver", options=chromeOptions)
     #driver = webdriver.Firefox(executable_path=r'C:/Users/fortgo01/geckodriver.exe')
 
     if (template_series == "7.2.x"):
@@ -523,23 +551,28 @@ def main():
     url = "http://" + server + "/view/HPCC-7.x/"
     driver.get(url)
     
-    print(("Setting up HPCC-" + full_version))
+    if set_builds == True:
+        print(("Setting up HPCC-" + full_version))
 
-    print("----------------------------------")
-    isWorkflow(driver, which_jenkins, build_version, version_series, search, dashboard)
-    print("----------------------------------")
-    setupBuilds(driver, build_version, full_version, template_series, version_series, search,
-            prev_platform_rc, prev_platform_gold, build_seq, release_type)
-    print("----------------------------------")
-    setupECLIDE(driver, full_version, search)
-    print("----------------------------------")
-    sparkPlugins(driver, full_version, search)
-    print("----------------------------------")
-    lnWithPluginSpark(driver, full_version, search)
-    print("----------------------------------")
-    createView(driver, which_jenkins, full_version)
-    print("----------------------------------")
-    # runBuilds(driver, search, full_version, build_version)
-    print("Configurations: Done")
+        print("----------------------------------")
+        isWorkflow(driver, which_jenkins, build_version, version_series, search, dashboard)
+        print("----------------------------------")
+        setupBuilds(driver, build_version, full_version, template_series, version_series, search,
+                prev_platform_rc, prev_platform_gold, build_seq, release_type)
+        print("----------------------------------")
+        setupECLIDE(driver, full_version, search)
+        print("----------------------------------")
+        sparkPlugins(driver, full_version, search)
+        print("----------------------------------")
+        lnWithPluginSpark(driver, full_version, search)
+        try:
+            print("----------------------------------")
+            createView(driver, which_jenkins, full_version)
+        except Exception as e:
+            print("A view might have already been created.")
+        print("----------------------------------")
+        print("Configurations: Done")
+    if trigger_builds == True:
+        runBuilds(driver, search, full_version, build_version)
 if __name__=="__main__":
     main()
