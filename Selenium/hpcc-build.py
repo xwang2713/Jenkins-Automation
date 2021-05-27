@@ -109,72 +109,12 @@ def setupBuilds(driver, build_version, full_version, template_series, version_se
     # select a workflow template
     template = Select(driver.find_element_by_id("template.templateName"))
 
-    if (version_series == "7.x"):
-        if (template_series == "7.0.x"):
-            print(full_version + " template found: Template-7.0.x ")
-            template.select_by_value("HPCC-Template-All-7.0.x")
-        elif (template_series == "7.2.x"):
-            print(full_version + " template found: Template-7.2.x ")
-            template.select_by_value("HPCC-Template-All-7.2.x")
-        elif (template_series == "7.4.x"):
-            print(full_version + " template found: Template-7.4.x ")
-            if (release_type == "rc"):
-                template.select_by_value("HPCC-Template-All-RC-7.4.x")
-            else:
-                template.select_by_value("HPCC-Template-All-Gold-7.4.x")
-        elif (template_series == "7.6.x"):
-            print(full_version + " template found: Template-7.6.x ")
-            if (release_type == "rc"):
-                template.select_by_value("HPCC-Template-All-RC-7.6.x")
-            else:
-                template.select_by_value("HPCC-Template-All-Gold-7.6.x")
-        elif (template_series == "7.8.x"):
-            print(full_version + " template found: Template-7.8.x ")
-            if (release_type == "rc"):
-                template.select_by_value("HPCC-Template-All-RC-7.8.x")
-            else:
-                template.select_by_value("HPCC-Template-All-Gold-7.8.x")
-        elif (template_series == "7.10.x"):
-            print(full_version + " template found: Template-7.10.x ")
-            if (release_type == "rc"):
-                template.select_by_value("HPCC-Template-All-RC-7.10.x")
-            else:
-                template.select_by_value("HPCC-Template-All-Gold-7.10.x")
-        elif (template_series == "7.12.x"):
-            print(full_version + " template found: Template-7.12.x ")
-            if (release_type == "rc"):
-                template.select_by_value("HPCC-Template-All-RC-7.12.x")
-            else:
-                template.select_by_value("HPCC-Template-All-Gold-7.12.x")
+    if (version_series != "6.x"):
+        print(full_version + " template found: Template-" + template_series)
+        if (release_type == "rc"):
+            template.select_by_value("HPCC-Template-All-RC-" + template_series)
         else:
-            if (release_type == "rc"):
-                template.select_by_value("HPCC-Template-All-RC-7.x")
-            else:
-                template.select_by_value("HPCC-Template-All-Gold-7.x")
-    elif (version_series == "8.x"):
-        if (template_series == "8.0.x"):
-            print(full_version + " template found: Template-8.0.x ")
-            if (release_type == "rc"):
-                template.select_by_value("HPCC-Template-All-RC-8.0.x")
-            else:
-                template.select_by_value("HPCC-Template-All-Gold-8.0.x")
-        else:
-            if (release_type == "rc"):
-                template.select_by_value("HPCC-Template-All-RC-7.x")
-            else:
-                template.select_by_value("HPCC-Template-All-Gold-7.x")
-    elif (version_series == "20.x"):
-        if (template_series == "20.0.x"):
-            print(full_version + " template found: Template-20.0.x ")
-            if (release_type == "rc"):
-                template.select_by_value("HPCC-Template-All-RC-20.0.x")
-            else:
-                template.select_by_value("HPCC-Template-All-Gold-20.0.x")
-        else:
-            if (release_type == "rc"):
-                template.select_by_value("HPCC-Template-All-RC-7.x")
-            else:
-                template.select_by_value("HPCC-Template-All-Gold-7.x")
+            template.select_by_value("HPCC-Template-All-Gold-" + template_series)
     elif (version_series == "6.x"):
         if (template_series == "6.4.x"):
             template.select_by_value("HPCC-Template-All-6.x")
