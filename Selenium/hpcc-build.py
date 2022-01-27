@@ -487,16 +487,13 @@ def main():
               os.path.basename(__file__) + " -h for help."))
         sys.exit()
 
-    # install webdriver: pip install webdriver-manager
-    # Create a new instance (object) of the Chrome driver
-    # driver = webdriver.Chrome(ChromeDriverManager().install())
     service = Service('/usr/local/bin/chromedriver')
-    # service.start()
 
+    # Create a new instance (object) of the Chrome driver
     if (headless_chrome == True):
-        driver = webdriver.Chrome(service.service_url, options=chromeOptions)
+        driver = webdriver.Chrome(service=Service(
+            ChromeDriverManager().install()), options=chromeOptions)
     else:
-        # driver = webdriver.Chrome(service.service_url)
         driver = webdriver.Chrome(service=Service(
             ChromeDriverManager().install()))
 
