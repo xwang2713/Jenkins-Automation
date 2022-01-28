@@ -1,4 +1,3 @@
-#!/usr/bin/python3.8
 # -*- coding: utf-8 -*-
 
 #############################################
@@ -447,6 +446,7 @@ def runBuilds(driver, search, full_version, build_version):
 
 # Main
 def main():
+    py_version = sys.version_info
     parser = OptionParser()
     parser.set_usage(
         "Usage: hpcc-build.py -s <server ip> v <version> -r <prev_platform_rc_version> -g <prev_platform_gold_version> --run")
@@ -488,17 +488,27 @@ def main():
         sys.exit()
 
     # install dependencies: pip3 install webdriver_manager beautifultable
-
-    service = Service('/usr/local/bin/chromedriver')
-    # Create a new instance (object) of the Chrome driver
-    if (headless == True):
-        driver = webdriver.Chrome(service=Service(
-            ChromeDriverManager().install()), options=chromeOptions)
+    if (py_version >= (3, 8)):
+        print("Running Selenium 4 with Python {}.{}.{}".format
+              (py_version.major, py_version.minor, py_version.micro))
+        service = Service('/usr/local/bin/chromedriver')
+        # Create a new instance (object) of the Chrome driver
+        if (headless == True):
+            driver = webdriver.Chrome(service=Service(
+                ChromeDriverManager().install()), options=chromeOptions)
+        else:
+            driver = webdriver.Chrome(service=Service(
+                ChromeDriverManager().install()))
     else:
-        driver = webdriver.Chrome(service=Service(
-            ChromeDriverManager().install()))
+        print("Running Selenium 3 with Python {}.{}.{}" .format
+              (py_version.major, py_version.minor, py_version.micro))
+        if (headless == True):
+            driver = webdriver.Chrome(
+                executable_path="/usr/local/bin/chromedriver", options=chromeOptions)
+        else:
+            driver = webdriver.Chrome('/usr/local/bin/chromedriver')
+            # driver = webdriver.Firefox(executable_path=r'C:/Users/fortgo01/geckodriver.exe')
 
-    # driver = webdriver.Firefox(executable_path=r'C:/Users/fortgo01/geckodriver.exe')
     server = "10.240.61.86"
 
     x = re.search("^rc[1-9]", build_seq)
