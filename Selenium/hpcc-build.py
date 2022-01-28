@@ -457,11 +457,11 @@ def main():
     parser.add_option("-g", "--prev-platform-gold", type="string", dest="prev_platform_gold",
                       help="Previous full platform gold version from current release. Ex. 7.2.8-1")
     parser.add_option("--set", action="store_true", default=False, dest="set",
-                      help="Run builds")
+                      help="Create builds on Jenkins server")
     parser.add_option("--run", action="store_true", default=False, dest="run",
                       help="Run builds")
     parser.add_option("--headless", action="store_true", default=False, dest="headless",
-                      help="Run builds")
+                      help="Create projects without browser GUI")
     options, args = parser.parse_args()
 
     server = ""
@@ -474,7 +474,7 @@ def main():
     prev_platform_gold = options.prev_platform_gold
     set_builds = options.set
     trigger_builds = options.run
-    headless_chrome = options.headless
+    headless = options.headless
 
     try:
         template_series = re.search(
@@ -487,10 +487,11 @@ def main():
               os.path.basename(__file__) + " -h for help."))
         sys.exit()
 
-    service = Service('/usr/local/bin/chromedriver')
+    # install dependencies: pip3 install webdriver_manager beautifultable
 
+    service = Service('/usr/local/bin/chromedriver')
     # Create a new instance (object) of the Chrome driver
-    if (headless_chrome == True):
+    if (headless == True):
         driver = webdriver.Chrome(service=Service(
             ChromeDriverManager().install()), options=chromeOptions)
     else:
