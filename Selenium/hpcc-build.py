@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 #############################################
@@ -89,7 +90,7 @@ def isWorkflow(driver, build_version, version_series, search, dashboard):
         workflowName = driver.find_element(By.XPATH, "//input[@id='name']")
         workflowName.send_keys("HPCC-" + build_version)
         itemType = driver.find_element(
-            By.XPATH, "//div[@id='j-add-item-type-uncategorized']")
+            By.XPATH, "//div[@id='j-add-item-type-uncategorized']/ul/li[2]/label")
         itemType.click()
         createItem = driver.find_element(By.XPATH, "//button[@id='ok-button']")
         createItem.click()
