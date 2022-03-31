@@ -463,13 +463,15 @@ def main():
                       help="Previous full platform gold version from current release. Ex. 7.2.8-1")
     parser.add_option("--set", action="store_true", default=False, dest="set",
                       help="Create builds on Jenkins server")
+    parser.add_option("-s", "--server", type="string", dest="server",
+                      help="Jenkins server IP")
     parser.add_option("--run", action="store_true", default=False, dest="run",
                       help="Run builds")
     parser.add_option("--headless", action="store_true", default=False, dest="headless",
                       help="Create projects without browser GUI")
     options, args = parser.parse_args()
 
-    server = ""
+    server = options.server
     full_version = options.build_ver_seq
     ver_seq = re.split("-",  full_version, 1)
     build_version = ver_seq[0]
@@ -514,8 +516,6 @@ def main():
             driver = webdriver.Chrome('/usr/local/bin/chromedriver')
             # driver = webdriver.Firefox(executable_path=r'C:/Users/fortgo01/geckodriver.exe')
 
-    server = "10.240.61.86"
-
     x = re.search("^rc[1-9]", build_seq)
     if (x):
         release_type = "rc"
@@ -524,6 +524,7 @@ def main():
 
     # go to the template for HPCC-7.x page
     url = "http://" + server + "/view/HPCC-7.x/"
+    print("Launching Jenkins server" + " " + url)
     driver.get(url)
 
     if set_builds == True:
