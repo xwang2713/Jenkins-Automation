@@ -207,8 +207,12 @@ def setupBuilds(driver, build_version, full_version, template_series, version_se
                 job_prefix = re.match("(.*)\.(.*)", jobName).group(2)
 
             job_id = job_prefix + '-' + major_minor + '.validation'
+            job_id_2 = job_prefix + '-' + major_minor + 'validation'
 
-            validateElem = driver.find_element(By.ID, job_id)
+            try:
+                validateElem = driver.find_element(By.ID, job_id)
+            except Exception as e:
+                validateElem = driver.find_element(By.ID, job_id_2)
             if (validateElem.text == 'valid name'):
                 print("Valid name: Yes")
             elif (validateElem.text == 'invalid name'):
