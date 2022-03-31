@@ -367,12 +367,12 @@ def createView(driver, full_version):
     # scroll to the location of the radio button to click it
     # driver.execute_script("window.scrollTo(23, 3425)")
     listViewElem = driver.find_element(
-        By.XPATH, "//*[@id='main-panel']/form/div[1]/div[2]/div/input")
+        By.XPATH, "//label[contains(.,'List View')]")
     listViewElem.click()
 
-    okButtonElem = driver.find_element(By.ID, "ok-button")
+    okButtonElem = driver.find_element(By.NAME, "Submit")
     WebDriverWait(driver, 15).until(
-        EC.element_to_be_clickable((By.ID, "ok-button")))
+        EC.element_to_be_clickable((By.NAME, "Submit")))
 
     try:
         okButtonElem.click()
@@ -396,7 +396,7 @@ def createView(driver, full_version):
     print("View created: Yes")
 
 
-def runBuilds(driver, search, full_version, build_version):
+def runBuilds(driver, server, search, full_version, build_version):
 
     # search
     search(driver, dashboard, "HPCC-" + build_version)
@@ -425,14 +425,22 @@ def runBuilds(driver, search, full_version, build_version):
 
     for build in builds:
         try:
-            x = driver.find_element(
-                By.XPATH, "//img[@alt='Schedule a Build for" + " " + build + "']")
-
             if (build != "CE-Candidate-HyperV-64bit-" + full_version and build != "CE-Candidate-Plugins-Spark-" + full_version
                 and build != "ECLIDE-W32-" + full_version and build != "CE-Candidate-VM-64bit-" + full_version
                 and build != "Java-Projects-Maven-Central-Release-" + full_version and build != "LN-Candidate-with-Plugins-Spark-" + full_version
                     and build != "Promote-LN-Docker-Image-" + full_version and build != "Regression-" + full_version):
-                x.click()
+
+                build_link = "http://" + server + "/view/HPCC-" + full_version + \
+                    "/job/" + build + "/build?delay=0sec"
+                print("Launching: " + build_link)
+
+                driver.get(build_link)
+
+                p = driver.find_element(
+                    By.XPATH, "//*[@id='main-panel']/form/input")
+
+                p.click()
+
                 r[0] = build
                 r[1] = '-'
                 r[2] = 'Running'
@@ -527,7 +535,7 @@ def main():
     print("Launching Jenkins server" + " " + url)
     driver.get(url)
 
-    if set_builds == True:
+    if set_builds:
         print(("Setting up HPCC-" + full_version))
 
         print("----------------------------------")
@@ -549,8 +557,8 @@ def main():
             print("A view might have already been created.")
         print("----------------------------------")
         print("Configurations: Done")
-    if trigger_builds == True:
-        runBuilds(driver, search, full_version, build_version)
+    if trigger_builds:
+        runBuilds(driver, server, search, full_version, build_version)
 
 
 if __name__ == "__main__":
