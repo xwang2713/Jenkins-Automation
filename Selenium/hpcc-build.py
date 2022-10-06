@@ -46,7 +46,7 @@ chromeOptions.add_argument('--remote-debugging-port=9222')
 # search an item
 def search(driver, dashboard, searchElem):
     sleep(1)
-    print("Search: " + searchElem)
+    print("Searching: " + searchElem)
     # clear search box
     dashboard(driver)
     # find the search box element by id
@@ -82,16 +82,30 @@ def isWorkflow(driver, build_version, version_series, search, dashboard):
         search(driver, dashboard, "HPCC-" + version_series)
 
         # create new item
+        print("Creating a new item.")
         createItem = driver.find_element(
-            By.XPATH, "//div[@id='tasks']/div/span/a/span[2]")
+            # By.XPATH, "//div[@id='tasks']/div/span/a/span[2]"
+            By.LINK_TEXT, "New Item")
         createItem.click()
+
         sleep(5)
+
         # workflowName = driver.find_element(By.ID, "name")
         workflowName = driver.find_element(By.XPATH, "//input[@id='name']")
         workflowName.send_keys("HPCC-" + build_version)
+
+        sleep(2)
+
+        driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
+        sleep(1)
         itemType = driver.find_element(
-            By.XPATH, "//div[@id='j-add-item-type-uncategorized']/ul/li[2]/label")
+            By.XPATH, "//div[@id='j-add-item-type-uncategorized']/ul/li[2]/label"
+            )
         itemType.click()
+        print("Selected: Template Workflow Job")
+
+        sleep(2)
+
         createItem = driver.find_element(By.XPATH, "//button[@id='ok-button']")
         createItem.click()
         print("New workflow created: HPCC-" + build_version)
@@ -104,7 +118,7 @@ def setupBuilds(driver, build_version, full_version, template_series, version_se
     # search
     search(driver, dashboard, "HPCC-" + build_version)
 
-    print("Setting up: HPCC-" + full_version + " jobs")
+    print("Setting up jobs for: HPCC-" + full_version)
 
     # get the major.minor.
     major_minor = re.search("(\d*\.\d*\.*)", build_version).group()
@@ -219,9 +233,11 @@ def setupBuilds(driver, build_version, full_version, template_series, version_se
                 print("Valid name: No")
             else:
                 print("Valid name: Unknown")
+    
+    driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
 
     a = True
-    while a == True:
+    while a:
         try:
             buttonElem = driver.find_element(
                 By.XPATH, "//input[@value='Create']")
@@ -240,7 +256,7 @@ def setupBuilds(driver, build_version, full_version, template_series, version_se
             sleep(5)
 
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
-        (By.XPATH, "//div[@id='tasks']/div[3]/span/a/span[2]")))
+        (By.XPATH, '//*[@id="side-panel"]/div[2]/div[2]/table/tbody/tr/td[2]/input')))
     print("Build list set: Yes")
 
 # ECLIDE build setup
@@ -289,15 +305,11 @@ def sparkPlugin(driver, full_version, search):
     search(driver, dashboard, "CE-Candidate-Plugins-Spark-" + full_version)
 
     textElem = driver.find_element(By.LINK_TEXT, "Configure")
-
-    try:
-        textElem.click()
-    except Exception as e:
-        sleep(1)
-        textElem.click()
-
-    # important!
     sleep(1)
+    textElem.click()
+    sleep(1)
+
+    driver.execute_script("window.scrollTo(72,document.body.scrollHeight)")
 
     # xpaths of artifacts' name input box
     artifacts = driver.find_elements(By.XPATH, "//input[@name='_.filter']")
@@ -309,8 +321,8 @@ def sparkPlugin(driver, full_version, search):
             elem.send_keys("Java-Projects-" + full_version)
         else:
             print(
-                "Warning: Unrecognized artifact found. Please add artifact in line 220 of the source code.")
-
+                "Warning: Unrecognized artifact found. Please add artifact in the source code.")
+    
     saveConfig = driver.find_element(By.XPATH, "//button[contains(.,'Save')]")
     saveConfig.click()
     print("Configured: Yes")
@@ -323,15 +335,11 @@ def lnWithPluginSpark(driver, full_version, search):
     search(driver, dashboard, "LN-Candidate-with-Plugins-Spark-" + full_version)
 
     textElem = driver.find_element(By.LINK_TEXT, "Configure")
-
-    try:
-        textElem.click()
-    except Exception as e:
-        sleep(1)
-        textElem.click()
-
-    # important!
     sleep(1)
+    textElem.click()
+    sleep(1)
+
+    driver.execute_script("window.scrollTo(72,document.body.scrollHeight)")
 
     # xpaths of artifacts' name input box
     artifacts = driver.find_elements(By.XPATH, "//input[@name='_.filter']")
