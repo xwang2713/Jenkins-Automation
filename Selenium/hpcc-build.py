@@ -22,6 +22,10 @@ import os
 import sys
 import re
 import time
+import xml.etree.ElementTree as ET
+from wsgiref.headers import Headers
+import requests
+from urllib import request
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from beautifultable import BeautifulTable
@@ -100,7 +104,7 @@ def isWorkflow(driver, build_version, version_series, search, dashboard):
         sleep(1)
         itemType = driver.find_element(
             By.XPATH, "//div[@id='j-add-item-type-uncategorized']/ul/li[2]/label"
-            )
+        )
         itemType.click()
         print("Selected: Template Workflow Job")
 
@@ -233,7 +237,7 @@ def setupBuilds(driver, build_version, full_version, template_series, version_se
                 print("Valid name: No")
             else:
                 print("Valid name: Unknown")
-    
+
     driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
 
     a = True
@@ -322,7 +326,7 @@ def sparkPlugin(driver, full_version, search):
         else:
             print(
                 "Warning: Unrecognized artifact found. Please add artifact in the source code.")
-    
+
     saveConfig = driver.find_element(By.XPATH, "//button[contains(.,'Save')]")
     saveConfig.click()
     print("Configured: Yes")
@@ -360,13 +364,29 @@ def lnWithPluginSpark(driver, full_version, search):
 # create new view
 
 
-def createView(driver, full_version):
-    print("Creating view: HPCC-" + full_version)
+def createView(driver, full_version, server, username, password):
+    build_name = "HPCC-" + full_version
+
+    print("Creating view:" + build_name)
+
+    # url = "http://" + server + "/view/all"
+
+    # tree = ET.parse('config/view.xml')
+    # root = tree.getroot()
+    # root.find('name').text = str(build_name)
+    # new_file_name = 'last-rendered-view.xml'
+    # tree.write(new_file_name)
+    # f = open(new_file_name, 'r')
+    # new_file = f.read()
+    # try:
+    #     view = requests.post(
+    #         url, data={'file': new_file}, headers={'Content-Type': 'application/xml'}, auth=(username, password))
+    #     print(view.text)
     allViewElem = driver.find_element(By.ID, "jenkins-name-icon")
     allViewElem.click()
 
     newViewElem = driver.find_element(
-        By.XPATH, "(//a[contains(@href, '/newView')])[2]")
+        By.XPATH, "(//a[contains(@href, '/newView')])")
     newViewElem.click()
 
     newViewName = driver.find_element(By.ID, "name")
@@ -385,8 +405,7 @@ def createView(driver, full_version):
     try:
         okButtonElem.click()
     except Exception as e:
-        print("A view with the name HPCC-" +
-              full_version + " " + "might already exist.")
+        print("A view with the name " + build_name + "might already exist.")
 
     # execute a click event using JavaScript
     driver.execute_script("document.getElementById('cb2').click();")
@@ -404,7 +423,7 @@ def createView(driver, full_version):
     print("View created: Yes")
 
 
-def runBuilds(driver, server, search, full_version, build_version):
+def runBuilds(driver, server, search, full_version, build_version, username, password):
 
     # search
     search(driver, dashboard, "HPCC-" + build_version)
@@ -438,16 +457,19 @@ def runBuilds(driver, server, search, full_version, build_version):
                 and build != "Java-Projects-Maven-Central-Release-" + full_version and build != "LN-Candidate-with-Plugins-Spark-" + full_version
                     and build != "Promote-LN-Docker-Image-" + full_version and build != "Regression-" + full_version):
 
-                build_link = "http://" + server + "/view/HPCC-" + full_version + \
-                    "/job/" + build + "/build?delay=0sec"
-                print("Launching: " + build_link)
+                # url = "http://" + server + "/view/HPCC-" + full_version + \
+                #     "/job/" + build + "/build?delay=0sec"
+                url = "http://" + server + "/view/HPCC-" + full_version + \
+                    "/job/" + build + "/build"
+                print("Launching: " + url)
+                trigger = requests.post(url, auth=(username, password))
+                print(trigger.text)
+                # driver.get(url)
 
-                driver.get(build_link)
+                # p = driver.find_element(
+                #     By.XPATH, "//*[@id='main-panel']/form/input")
 
-                p = driver.find_element(
-                    By.XPATH, "//*[@id='main-panel']/form/input")
-
-                p.click()
+                # p.click()
 
                 r[0] = build
                 r[1] = '-'
@@ -470,19 +492,23 @@ def main():
     py_version = sys.version_info
     parser = OptionParser()
     parser.set_usage(
-        "Usage: hpcc-build.py -s <server ip> v <version> -r <prev_platform_rc_version> -g <prev_platform_gold_version> --run")
+        "Usage: hpcc-build.py -s <server ip> --username <Jenkins username> --password <Jenkins password, token, or API key> v <version> -r <prev_platform_rc_version> -g <prev_platform_gold_version> --create --run")
     parser.add_option("-v", "--version", type="string", dest="build_ver_seq",
                       help="Build versions are in the form of XX.XX.XX-X. Ex. 7.2.8-rc1")
     parser.add_option("-r", "--prev-platform-rc", type="string", dest="prev_platform_rc",
                       help="Previous full platform rc version from current release. Ex. 7.2.8-rc1")
     parser.add_option("-g", "--prev-platform-gold", type="string", dest="prev_platform_gold",
                       help="Previous full platform gold version from current release. Ex. 7.2.8-1")
-    parser.add_option("--set", action="store_true", default=False, dest="set",
+    parser.add_option("--create", action="store_true", default=False, dest="create",
                       help="Create builds on Jenkins server")
     parser.add_option("-s", "--server", type="string", dest="server",
                       help="Jenkins server IP")
     parser.add_option("--run", action="store_true", default=False, dest="run",
                       help="Run builds")
+    parser.add_option("-u", "--username", type="string", default="jenkins-auto", dest="username",
+                      help="Jenkins username")
+    parser.add_option("-p", "--password", type="string", dest="password",
+                      help="Jenkins password")
     parser.add_option("--headless", action="store_true", default=False, dest="headless",
                       help="Create projects without browser GUI")
     options, args = parser.parse_args()
@@ -495,9 +521,11 @@ def main():
 
     prev_platform_rc = options.prev_platform_rc
     prev_platform_gold = options.prev_platform_gold
-    set_builds = options.set
+    create_builds = options.create
     trigger_builds = options.run
     headless = options.headless
+    username = options.username
+    password = options.password
 
     try:
         template_series = re.search(
@@ -543,9 +571,8 @@ def main():
     print("Launching Jenkins server" + " " + url)
     driver.get(url)
 
-    if set_builds:
+    if create_builds:
         print(("Setting up HPCC-" + full_version))
-
         print("----------------------------------")
         isWorkflow(driver, build_version,
                    version_series, search, dashboard)
@@ -560,13 +587,15 @@ def main():
         lnWithPluginSpark(driver, full_version, search)
         try:
             print("----------------------------------")
-            createView(driver, full_version)
+            createView(driver, full_version, server, username, password)
         except Exception as e:
+            print("Unable to create the view.")
             print("A view might have already been created.")
         print("----------------------------------")
         print("Configurations: Done")
     if trigger_builds:
-        runBuilds(driver, server, search, full_version, build_version)
+        runBuilds(driver, server, search, full_version,
+                  build_version, username, password)
 
 
 if __name__ == "__main__":
