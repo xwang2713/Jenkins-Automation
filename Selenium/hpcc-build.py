@@ -18,6 +18,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #############################################
 
+from multiprocessing.connection import wait
 import os
 import sys
 import re
@@ -366,10 +367,7 @@ def lnWithPluginSpark(driver, full_version, search):
 
 def createView(driver, full_version, server, username, password):
     build_name = "HPCC-" + full_version
-
-    print("Creating view:" + build_name)
-
-    # url = "http://" + server + "/view/all"
+    url = "http://" + server + "/newView"
 
     # tree = ET.parse('config/view.xml')
     # root = tree.getroot()
@@ -382,21 +380,23 @@ def createView(driver, full_version, server, username, password):
     #     view = requests.post(
     #         url, data={'file': new_file}, headers={'Content-Type': 'application/xml'}, auth=(username, password))
     #     print(view.text)
-    allViewElem = driver.find_element(By.ID, "jenkins-name-icon")
-    allViewElem.click()
+    # allViewElem = driver.find_element(By.ID, "jenkins-name-icon")
+    # allViewElem.click()
+    # print('Home button clicked')
+    # newViewElem = driver.find_element(
+    #     By.XPATH, "(//a[contains(@href, '/newView')])")
+    # newViewElem.click()
 
-    newViewElem = driver.find_element(
-        By.XPATH, "(//a[contains(@href, '/newView')])")
-    newViewElem.click()
-
+    driver.get(url)
+    print(f'Creating a new view for {build_name}')
     newViewName = driver.find_element(By.ID, "name")
-    newViewName.send_keys("HPCC-" + full_version)
-
-    # scroll to the location of the radio button to click it
-    # driver.execute_script("window.scrollTo(23, 3425)")
+    newViewName.send_keys(build_name)
     listViewElem = driver.find_element(
         By.XPATH, "//label[contains(.,'List View')]")
-    listViewElem.click()
+    try:
+        listViewElem.click()
+    except Exception as e:
+        listViewElem.click()
 
     okButtonElem = driver.find_element(By.NAME, "Submit")
     WebDriverWait(driver, 15).until(
@@ -404,22 +404,26 @@ def createView(driver, full_version, server, username, password):
 
     try:
         okButtonElem.click()
+        print("A new view has been created for " + build_name)
     except Exception as e:
-        print("A view with the name " + build_name + "might already exist.")
+        try:
+            okButtonElem.click()
+            print("A new view has been created for " + build_name)
+        except Exception as e:
+            print("A view with the name " + build_name + "might already exist.")
 
+    print(f'Configuring {build_name} view')
     # execute a click event using JavaScript
     driver.execute_script("document.getElementById('cb2').click();")
     WebDriverWait(driver, 15).until(
         EC.element_to_be_clickable((By.NAME, 'includeRegex')))
-
     regxElem = driver.find_element(By.NAME, "includeRegex")
     regxElem.send_keys(".*" + full_version)
 
     okButtonElem = driver.find_element(By.XPATH, "//button[contains(.,'OK')]")
-
     WebDriverWait(driver, 30).until(EC.element_to_be_clickable(
         (By.XPATH, "//button[contains(.,'OK')]")))
-    okButtonElem.click()
+    driver.execute_script("arguments[0].click();", okButtonElem)
     print("View created: Yes")
 
 
