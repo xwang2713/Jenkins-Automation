@@ -134,7 +134,7 @@ def setupBuilds(driver, build_version, full_version, template_series, version_se
 
     # important!
     # wait for elements to be loaded
-    sleep(1)
+    sleep(3)
 
     # select a workflow template
     template = Select(driver.find_element(By.ID, "template.templateName"))
@@ -154,9 +154,9 @@ def setupBuilds(driver, build_version, full_version, template_series, version_se
 
     # important!
     # wait for elements to be loaded
-    WebDriverWait(driver, 30).until(EC.element_to_be_clickable(
-        (By.NAME, 'template.templateInstanceName')))
-    sleep(3)
+    # WebDriverWait(driver, 30).until(EC.element_to_be_clickable(
+    #     (By.NAME, 'template.templateInstanceName')))
+    sleep(5)
 
     # select a workflow name
     workflowName = driver.find_element(
@@ -241,8 +241,8 @@ def setupBuilds(driver, build_version, full_version, template_series, version_se
 
     driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
 
-    a = True
-    while a:
+    a = 0
+    while a < 10:
         try:
             buttonElem = driver.find_element(
                 By.XPATH, "//input[@value='Create']")
@@ -259,9 +259,11 @@ def setupBuilds(driver, build_version, full_version, template_series, version_se
             print("Build name validation failed.")
             print("Build names will be validated again in 5 seconds.")
             sleep(5)
+            a += 1
 
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
-        (By.XPATH, '//*[@id="side-panel"]/div[2]/div[2]/table/tbody/tr/td[2]/input')))
+    # WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
+    #     (By.XPATH, '//*[@id="side-panel"]/div[2]/div[2]/table/tbody/tr/td[2]/input')))
+    sleep(5)
     print("Build list set: Yes")
 
 # ECLIDE build setup
