@@ -434,6 +434,7 @@ def runBuilds(driver, server, search, full_version, build_version, username, pas
     # search
     search(driver, dashboard, "HPCC-" + build_version)
 
+    sleep(5)
     wflow = driver.find_element(By.LINK_TEXT, "WF-HPCC-" + full_version)
     wflow.click()
 
