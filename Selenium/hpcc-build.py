@@ -525,7 +525,7 @@ def main():
     ver_seq = re.split("-",  full_version, 1)
     build_version = ver_seq[0]
     build_seq = ver_seq[1]
-    major = int(re.search("(\d*\.*\.*\.*)", build_version).group())
+    major = int(re.search("(\d\.\.*\.*)", build_version).group())
 
     prev_platform_rc = options.prev_platform_rc
     prev_platform_gold = options.prev_platform_gold
@@ -539,7 +539,7 @@ def main():
         template_series = re.search(
             "(\d*\.\d*\.*)", build_version).group() + "x"  # example: 8.0.x
         version_series = re.search(
-            "(\d*\.\.*\.*)", build_version).group() + "x"  # example: 8.x
+            "(\d*\.*\.*\.*)", build_version).group() + "x"  # example: 8.x
         print("Building from template series: " + "HPCC-" + template_series)
     except Exception as e:
         print(("Please enter a valid version or type " +
