@@ -525,7 +525,7 @@ def main():
     ver_seq = re.split("-",  full_version, 1)
     build_version = ver_seq[0]
     build_seq = ver_seq[1]
-    major = int(re.search("(\d\.\.*\.*)", build_version).group())
+    major = int(re.search("(^[0-9]*)", build_version).group())
 
     prev_platform_rc = options.prev_platform_rc
     prev_platform_gold = options.prev_platform_gold
