@@ -474,6 +474,7 @@ def main():
     ver_seq = re.split("-",  full_version, 1)
     build_version = ver_seq[0]
     build_seq = ver_seq[1]
+    major = int(re.search("(\d*\.*\.*\.*)", build_version).group())
 
     prev_platform_rc = options.prev_platform_rc
     prev_platform_gold = options.prev_platform_gold
@@ -538,9 +539,10 @@ def main():
         print("----------------------------------")
         setupECLIDE(driver, full_version, search)
         print("----------------------------------")
-        sparkPlugin(driver, full_version, search)
-        print("----------------------------------")
-        lnWithPluginSpark(driver, full_version, search)
+        if major < 9:
+            sparkPlugin(driver, full_version, search)
+            print("----------------------------------")
+            lnWithPluginSpark(driver, full_version, search)
         try:
             print("----------------------------------")
             createView(driver, full_version)
