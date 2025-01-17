@@ -25,7 +25,8 @@ Options:
   -g PREV_PLATFORM_GOLD, --prev-platform-gold=PREV_PLATFORM_GOLD
                         Previous full platform gold version from current
                         release. Ex. 7.2.8-1
-  --set                 Create builds on Jenkins server
+  --create                 Create builds on Jenkins server
   --run                 Run builds
   --headless            Create projects without browser GUI
+  --noide               Do not create ECL IDE builds
   ```
