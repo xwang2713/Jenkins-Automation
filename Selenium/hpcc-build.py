@@ -508,6 +508,8 @@ def main():
                       help="Previous full platform gold version from current release. Ex. 7.2.8-1")
     parser.add_option("--create", action="store_true", default=False, dest="create",
                       help="Create builds on Jenkins server")
+    parser.add_option("--noide", action="store_true", default=False, dest="noide",
+                      help="Do not create ECL IDE build")
     parser.add_option("-s", "--server", type="string", dest="server",
                       help="Jenkins server IP")
     parser.add_option("--run", action="store_true", default=False, dest="run",
@@ -530,6 +532,7 @@ def main():
     prev_platform_rc = options.prev_platform_rc
     prev_platform_gold = options.prev_platform_gold
     create_builds = options.create
+    no_ide = options.noide
     trigger_builds = options.run
     headless = options.headless
     username = options.username
@@ -575,7 +578,7 @@ def main():
         release_type = "gold"
 
     # go to the template for HPCC-7.x page
-    url = "http://" + server + "/view/HPCC-7.x/"
+    url = "http://" + server 
     print("Launching Jenkins server" + " " + url)
     driver.get(url)
 
@@ -588,8 +591,9 @@ def main():
         setupBuilds(driver, build_version, full_version, template_series, version_series, search,
                     prev_platform_rc, prev_platform_gold, build_seq, release_type)
         print("----------------------------------")
-        setupECLIDE(driver, full_version, search)
-        print("----------------------------------")
+        if no_ide == False:
+            setupECLIDE(driver, full_version, search)
+            print("----------------------------------")
         if major < 9:
             sparkPlugin(driver, full_version, search)
             print("----------------------------------")
